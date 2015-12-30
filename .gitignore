@@ -4,6 +4,9 @@
 *.o
 *.obj
 
+# moc-files
+moc_*.cpp
+
 # Precompiled Headers
 *.gch
 *.pch
