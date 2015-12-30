@@ -7,6 +7,7 @@
 # moc-files
 moc_*.cpp
 
+
 # ui-h-files
 ui_*.h
 
@@ -32,6 +33,9 @@ ui_*.h
 *.exe
 *.out
 *.app
+
+# the doxygen result
+doxydoc
 
 test_externelator
 Makefile

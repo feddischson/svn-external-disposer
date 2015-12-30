@@ -14,6 +14,12 @@ make
 make install
 ```
 
+# Create Documentation
+```
+doxygen doxy.cfg
+```
+The result is placed in `doxydoc`.
+
 
 # Run some tests
 ```
