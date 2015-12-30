@@ -24,3 +24,6 @@ SOURCES     += src/mainwindow.cpp
 SOURCES     += src/item.cpp
 SOURCES     += src/data_model.cpp
 
+
+target.path = /usr/local/bin
+INSTALLS += target
