@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = test_externelator
+TARGET = test_svn_externals_disposer
 INCLUDEPATH += ./include ./test
 DEPENDPATH += . include src test
 
