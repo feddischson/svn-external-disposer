@@ -114,8 +114,10 @@ void Main_Window::update_tree( void )
    if( process.waitForFinished( SYS_PROCESS_TIMEOUT ) && 
        process.exitCode() == 0 ) // wait 3 seconds
    {
-      data_model = new Data_Model( working_cp_path );
+      data_model = new Data_Model( );
+      data_model->setRootPath( working_cp_path );
       ui.externals_TV->setModel( data_model );
+      ui.externals_TV->setRootIndex( data_model->index( working_cp_path ) );
       load_column_settings();
    }
 

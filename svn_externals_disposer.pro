@@ -17,11 +17,9 @@ FORMS += forms/MainWindow.ui
 
 HEADERS     += include/const.h
 HEADERS     += include/mainwindow.h
-HEADERS     += include/item.h
 HEADERS     += include/data_model.h
 SOURCES     += src/main.cpp
 SOURCES     += src/mainwindow.cpp
-SOURCES     += src/item.cpp
 SOURCES     += src/data_model.cpp
 
 

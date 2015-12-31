@@ -11,6 +11,7 @@ CONFIG += testcase        # enable test-cases for make
 CONFIG += debug
 
 
+QT          += widgets
 QT          += xml
 QT          += core
 QT          += testlib
@@ -18,14 +19,10 @@ QT          += testlib
 DEFINES += TESTING
 
 HEADERS     += include/const.h
-HEADERS     += include/item.h
 HEADERS     += include/data_model.h
 HEADERS     += test/test_data_model.h
-HEADERS     += test/test_item.h
-SOURCES     += src/item.cpp
 SOURCES     += src/data_model.cpp
 SOURCES     += test/test_data_model.cpp
-SOURCES     += test/test_item.cpp
 SOURCES     += test/main.cpp
 
 

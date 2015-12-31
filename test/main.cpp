@@ -23,22 +23,7 @@
 #include <QTest>
 
 #include "test_data_model.h"
-#include "test_item.h"
 
 using namespace SVN_EXTERNALS_DISPOSER;
 
-int main(int argc, char *argv[])
-{
-    int result = 0;
-
-    Test_Item       test_item;
-    Test_Data_Model test_data_model;
-
-
-
-    result += QTest::qExec(&test_item,       argc, argv );
-    result += QTest::qExec(&test_data_model, argc, argv );
-
-    return result;
-}
-
+QTEST_MAIN( Test_Data_Model );

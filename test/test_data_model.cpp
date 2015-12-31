@@ -33,12 +33,14 @@ Test_Data_Model::Test_Data_Model( QObject *parent )
 void  Test_Data_Model::test_external1()
 {
   Data_Model m;
-  QList< QVariant > result = m.parse_external( "-r 4 http://some-url/svn-xy@5 local-path" );
-  QCOMPARE( result.length(), 4 );
-  QCOMPARE( result[0].toString(), QString( "local-path" ) );
-  QCOMPARE( result[1].toString(), QString( "http://some-url/svn-xy" ) );
-  QCOMPARE( result[2].toString(), QString( "5" ) );
-  QCOMPARE( result[3].toString(), QString( "4" ) );
+  Data_Model::External result = m.parse_external(
+        "-r 4 http://some-url/svn-xy@5 local-path", 
+        "some/dir" );
+  QCOMPARE( result.valid, true );
+  QCOMPARE( result.local_path.toString() ,         QString( "local-path" ) );
+  QCOMPARE( result.url.toString() ,                QString( "http://some-url/svn-xy" ) );
+  QCOMPARE( result.peg_revision.toString() ,       QString( "5" ) );
+  QCOMPARE( result.operative_revision.toString() , QString( "4" ) );
 }
 
 
@@ -48,12 +50,12 @@ void  Test_Data_Model::test_external1()
 void  Test_Data_Model::test_external2()
 {
   Data_Model m;
-  QList< QVariant > result = m.parse_external( "^/../some/other/path xyz" );
-  QCOMPARE( result.length(), 4 );
-  QCOMPARE( result[0].toString(), QString( "xyz" ) );
-  QCOMPARE( result[1].toString(), QString( "^/../some/other/path" ) );
-  QCOMPARE( result[2].toString(), QString( "" ) );
-  QCOMPARE( result[3].toString(), QString( "" ) );
+  Data_Model::External result = m.parse_external( "^/../some/other/path xyz", "some/dir" );
+  QCOMPARE( result.valid, true );
+  QCOMPARE( result.local_path.toString() ,         QString( "xyz" ) );
+  QCOMPARE( result.url.toString() ,                QString( "^/../some/other/path" ) );
+  QCOMPARE( result.peg_revision.toString() ,       QString( "" ) );
+  QCOMPARE( result.operative_revision.toString() , QString( "" ) );
 }
 
 
@@ -61,23 +63,23 @@ void  Test_Data_Model::test_external2()
 void  Test_Data_Model::test_external3()
 {
   Data_Model m;
-  QList< QVariant > result = m.parse_external( "https:/svn_url/xyz@5 abc_def" );
-  QCOMPARE( result.length(), 4 );
-  QCOMPARE( result[0].toString(), QString( "abc_def" ) );
-  QCOMPARE( result[1].toString(), QString( "https:/svn_url/xyz" ) );
-  QCOMPARE( result[2].toString(), QString( "5" ) );
-  QCOMPARE( result[3].toString(), QString( "" ) );
+  Data_Model::External result = m.parse_external( "https:/svn_url/xyz@5 abc_def", "some/dir" );
+  QCOMPARE( result.valid, true );
+  QCOMPARE( result.local_path.toString() ,         QString( "abc_def" ) );
+  QCOMPARE( result.url.toString() ,                QString( "https:/svn_url/xyz" ) );
+  QCOMPARE( result.peg_revision.toString() ,       QString( "5" ) );
+  QCOMPARE( result.operative_revision.toString() , QString( "" ) );
 }
 
 void  Test_Data_Model::test_external4()
 {
   Data_Model m;
-  QList< QVariant > result = m.parse_external( "^/../some_project/xyz test1/some_lib" );
-  QCOMPARE( result.length(), 4 );
-  QCOMPARE( result[0].toString(), QString( "test1/some_lib" ) );
-  QCOMPARE( result[1].toString(), QString( "^/../some_project/xyz" ) );
-  QCOMPARE( result[2].toString(), QString( "" ) );
-  QCOMPARE( result[3].toString(), QString( "" ) );
+  Data_Model::External result = m.parse_external( "^/../some_project/xyz test1/some_lib", "some/dir"  );
+  QCOMPARE( result.valid, true );
+  QCOMPARE( result.local_path.toString() ,         QString( "test1/some_lib" ) );
+  QCOMPARE( result.url.toString() ,                QString( "^/../some_project/xyz" ) );
+  QCOMPARE( result.peg_revision.toString() ,       QString( "" ) );
+  QCOMPARE( result.operative_revision.toString() , QString( "" ) );
 }
 
 
@@ -85,34 +87,40 @@ void  Test_Data_Model::test_external4()
 void  Test_Data_Model::test_external5()
 {
   Data_Model m;
-  QList< QVariant > result = m.parse_external( "test1/some_lib http://192.168.222.222/svn/testproj3/xyz" );
-  QCOMPARE( result.length(), 4 );
-  QCOMPARE( result[0].toString(), QString( "test1/some_lib" ) );
-  QCOMPARE( result[1].toString(), QString( "http://192.168.222.222/svn/testproj3/xyz" ) );
-  QCOMPARE( result[2].toString(), QString( "" ) );
-  QCOMPARE( result[3].toString(), QString( "" ) );
+  Data_Model::External result = m.parse_external( 
+        "test1/some_lib http://192.168.222.222/svn/testproj3/xyz", 
+        "some/dir" );
+  QCOMPARE( result.valid, true );
+  QCOMPARE( result.local_path.toString() ,         QString( "test1/some_lib" ) );
+  QCOMPARE( result.url.toString() ,                QString( "http://192.168.222.222/svn/testproj3/xyz" ) );
+  QCOMPARE( result.peg_revision.toString() ,       QString( "" ) );
+  QCOMPARE( result.operative_revision.toString() , QString( "" ) );
 }
 
 void  Test_Data_Model::test_external6()
 {
   Data_Model m;
-  QList< QVariant > result = m.parse_external( "test1/some_lib   -r     4  http://192.168.222.222/svn/testproj3/xyz" );
-  QCOMPARE( result.length(), 4 );
-  QCOMPARE( result[0].toString(), QString( "test1/some_lib" ) );
-  QCOMPARE( result[1].toString(), QString( "http://192.168.222.222/svn/testproj3/xyz" ) );
-  QCOMPARE( result[2].toString(), QString( "" ) );
-  QCOMPARE( result[3].toString(), QString( "4" ) );
+  Data_Model::External result = m.parse_external( 
+        "test1/some_lib   -r     4  http://192.168.222.222/svn/testproj3/xyz", 
+        "some/dir" );
+  QCOMPARE( result.valid, true );
+  QCOMPARE( result.local_path.toString() ,         QString( "test1/some_lib" ) );
+  QCOMPARE( result.url.toString() ,                QString( "http://192.168.222.222/svn/testproj3/xyz" ) );
+  QCOMPARE( result.peg_revision.toString() ,       QString( "" ) );
+  QCOMPARE( result.operative_revision.toString() , QString( "4" ) );
 }
 
 void  Test_Data_Model::test_external7()
 {
   Data_Model m;
-  QList< QVariant > result = m.parse_external( "dir http://192.168.123.123" );
-  QCOMPARE( result.length(), 4 );
-  QCOMPARE( result[0].toString(), QString( "dir" ) );
-  QCOMPARE( result[1].toString(), QString( "http://192.168.123.123" ) );
-  QCOMPARE( result[2].toString(), QString( "" ) );
-  QCOMPARE( result[3].toString(), QString( "" ) );
+  Data_Model::External result = m.parse_external( 
+        "dir http://192.168.123.123",
+        "some_dir" );
+  QCOMPARE( result.valid, true );
+  QCOMPARE( result.local_path.toString() ,         QString( "dir" ) );
+  QCOMPARE( result.url.toString() ,                QString( "http://192.168.123.123" ) );
+  QCOMPARE( result.peg_revision.toString() ,       QString( "" ) );
+  QCOMPARE( result.operative_revision.toString(), QString( "" ) );
 }
 
 

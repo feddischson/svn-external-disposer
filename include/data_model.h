@@ -22,11 +22,10 @@
 #define _SVN_EXTERNALS_DISPOSER_DATA_MODEL_H_
 #include <QObject>
 #include <QTextStream>
-#include <QAbstractItemModel>
+#include <QFileSystemModel>
 #include <QMap>
 #include <QRegExp>
 
-#include <item.h>
 
 namespace SVN_EXTERNALS_DISPOSER
 {
@@ -34,12 +33,11 @@ namespace SVN_EXTERNALS_DISPOSER
 
 /// @brief The data-model class.
 ///
-/// This class realizes QAbstractItemModel and provides access to instances of Item.
-/// Moreover, the function setup_model_data scans a given directory, uses 'svn propget' 
-/// to extract the svn:externals information and creates these instances of Item.
+/// This class inherits QFileSystemModel to provide a file-system based access to a local
+/// SVN repository. This calls futher extends QFileSystemModel by some svn:external information.
 /// 
 /// @author feddischson
-class Data_Model : public QAbstractItemModel
+class Data_Model : public QFileSystemModel
 {
 
    #ifdef TESTING
@@ -49,11 +47,11 @@ class Data_Model : public QAbstractItemModel
    Q_OBJECT
 public:
 
-   /// @brief Ctor: scans recusively the directory defined by path
-   ///              via setup_model_data.
+   /// @brief Ctor: Initializes the header information
+   ///              
    ///
    explicit Data_Model( 
-         const QString  & path = "", 
+         /*const QString  & path = "", */
          QObject *parent = nullptr );
 
 
@@ -73,80 +71,116 @@ public:
    Data_Model& operator=( Data_Model && rhs ) = delete;
 
 
-   /// @brief Standard dtor
-   ~Data_Model();
+   /// @brief Default dtor
+   virtual ~Data_Model() = default;
 
 
-   /// @brief  Provides access to a column of an Item Item.
+   /// @brief  Provides access to a column of an entry.
    /// @return The content of one cell
    QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
 
 
-   /// @brief  Provides flags for an column of an Item
+   /// @brief  Provides flags for an entry
    Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 
-   /// @brief  Provides access the header (the root item)
+   /// @brief  Provides access the header 
    QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
-
-   /// @brief  Creates and returns an index of a child item, 
-   //          if the parent index is valid.
-   QModelIndex index(int row, int column,
-                      const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-
-
-   /// @brief  Crestes and returns an index of a parent item.
-   QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
-
-
-   /// @brief  Returns the number of rows 
-   int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-
-
-   /// @brief  Returns the number of columns 
+   /// @brief  Returns the number of columns
    int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
 
-   /// @brief  Sets the data to a specific Item.
-   bool setData( const QModelIndex & index,
-                              const QVariant & value, int role ) Q_DECL_OVERRIDE;
-
+   /// @brief  Sets the root path (for this and fpr the super class)
+   QModelIndex setRootPath( const QString & new_path );
 
 private:
 
-   /// @brief  Initializes the model data by scanning the given directory.
+
+
+   /// @brief Represents a external entry. The content is stored in QVariant 
+   ///        attributes
+   struct External
+   {  
+      /// @brief Create a valid instance with all necessary information.
+      External( 
+       const QString & local_path,
+       const QString & url,
+       const QString & peg_revision,
+       const QString & operative_revision,
+       const QString & storage_path
+            ) : 
+         local_path         ( local_path         ),
+         url                ( url                ),
+         peg_revision       ( peg_revision       ),
+         operative_revision ( operative_revision ),
+         storage_path       ( storage_path       ),
+         valid( true ) { }
+
+      /// @brief In case of no data is provided, we create an invalid instance.
+      External( ) : valid( false ) { }
+
+
+      /// @defgroup external_default Default Ctors, Dtor and operators
+      /// The defult implementation of (move) copy-ctors, (move) assignment 
+      /// operators and destructor is used.
+      /// @{
+      External( const External & e )              = default;
+      External& operator= (const External & rhs ) = default;
+      External & operator=( External  && rhs )    = default;
+      External ( External  && rhs )               = default;
+      ~External ()                                = default;
+      /// @}
+
+      /// @defgroup external_data External content
+      /// @{
+      QVariant local_path;
+      QVariant url;
+      QVariant peg_revision;
+      QVariant operative_revision;
+      QVariant storage_path;
+      /// @}
+
+      /// @brief valid-flag
+      bool valid;
+   };
+
+
+   /// @brief  Initializes the svn:externals map external_map
+   ///         by scanning the given directory.
    /// @param path
    ///         Path to the directory, which is scanned.
-   /// @param parent
-   ///         The parent item, to which the new Items are added. 
    ///         
    void setup_model_data( 
-      const QString                  & path, 
-      Item *parent );
+      const QString                  & path );
 
 
    /// @brief  Calls 'svn propget svn:externals ...' via QProcess 
    ///         and extracts the data from the XML output.
    bool read_externals( 
-      const QString & path,
-      QMap< QString, QString > * external_map );
+      const QString & path );
 
 
 
-   /// @brief  Extracts svn:externals entries from a set of svn:externals (the whole property).
-   /// @return A QMap with paths as key and Item as values.
-   QMap< QString, Item* > extract_externals( 
-            Item * parent, 
-      const QString       & external_property );
+   /// @brief  Extracts svn:externals entries from a set of svn:externals (the whole property),
+   ///         and calles parse_external to extract the svn:externals information.
+   ///         The result is stored in external_map.
+   void extract_externals( 
+      const QString       & path,
+      const QString       & property );
 
 
 
    /// @brief  Parses svn:external entries via regular expressions
-   QList< QVariant > parse_external( const QString & entry );
+   /// @return A External instance, which holds all information. 
+   ///         If parings fails, External.valid is set to false.
+   ///
+   External parse_external( const QString & entry, const QString & path );
 
 
+   /// @brief  List for our header extension
+   QList< QVariant > header;
 
    /// @brief  Regular expression matcher for the current svn:externals syntax
    QRegExp external_matcher;
@@ -154,9 +188,10 @@ private:
    /// @brief  Regular expression matcher for the old svn:externals syntax
    QRegExp old_external_matcher;
 
+   /// @brief  Holds all externals
+   ///         The absolute local path is used as key
+   QMap< QString, External > external_map;
 
-   /// @brief  The root item.
-   Item *root_item;
 
 }; // class Data_Model
 

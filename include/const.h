@@ -72,10 +72,11 @@ namespace SVN_EXTERNALS_DISPOSER
    /// @defgroup gui_const  GUI string constants
    /// String constants used within the GUI.
    /// @{
-   static const QString GUI_HEAD_FOLDER       = QObject::tr( "Folder"             );
+   static const QString GUI_HEAD_TARGET       = QObject::tr( "Target"             );
    static const QString GUI_HEAD_EXTERNAL     = QObject::tr( "External Path"      );
    static const QString GUI_HEAD_PEG          = QObject::tr( "Peg Revision"       );
    static const QString GUI_HEAD_OPERATIVE    = QObject::tr( "Operative Revision" );
+   static const QString GUI_HEAD_PATH         = QObject::tr( "Defined at"         );
    /// @}
 
    /// 
