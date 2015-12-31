@@ -26,7 +26,8 @@
 namespace SVN_EXTERNALS_DISPOSER
 {
 
-   static const QString EMPTY_STRING      = "";
+   /// @brief The name of this tool
+   static const QString TOOL_NAME         = "SVN-Externals-Disposer";
 
    /// @defgroup xml_const  XML string constants
    /// Used to extract data from the xml output of svn propget --xml
