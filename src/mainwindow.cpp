@@ -38,8 +38,6 @@ Main_Window::Main_Window( QWidget *parent  )
 {
    ui.setupUi(this);
 
-   QSettings settings;
-
    // this loads also working_cp_path
    load_settings( );
 
