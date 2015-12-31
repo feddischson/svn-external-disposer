@@ -33,16 +33,19 @@ namespace SVN_EXTERNALS_DISPOSER
 Main_Window::Main_Window( QWidget *parent  ) 
    : QMainWindow( parent ),
      data_model( nullptr ),
-     settings_file( QApplication::applicationDirPath() + SET_FILE ),
      working_cp_path( "" ),
      expanded( false )
 {
    ui.setupUi(this);
 
+   QSettings settings;
+
    // this loads also working_cp_path
    load_settings( );
 
    ui.externals_TV->show();
+
+   setWindowTitle( APP_NAME + " v" + APP_VERSION );
 }
 
 Main_Window::~Main_Window( )
@@ -65,7 +68,7 @@ void Main_Window::del_external_model( void )
 
 void Main_Window::load_settings( void )
 {
-   QSettings settings( settings_file, QSettings::NativeFormat);
+   QSettings settings;
    working_cp_path = settings.value( SET_CP_PATH, "" ).toString();
    ui.working_copy_path_LE->setText( working_cp_path );
    update_tree();
@@ -73,7 +76,7 @@ void Main_Window::load_settings( void )
 
 void Main_Window::save_column_settings( void )
 {
-   QSettings settings( settings_file, QSettings::NativeFormat);
+   QSettings settings;
    settings.setValue( SET_COLUMN_W1, ui.externals_TV->columnWidth(0) );
    settings.setValue( SET_COLUMN_W2, ui.externals_TV->columnWidth(1) );
    settings.setValue( SET_COLUMN_W3, ui.externals_TV->columnWidth(2) );
@@ -82,7 +85,7 @@ void Main_Window::save_column_settings( void )
 
 void Main_Window::load_column_settings( void )
 {
-   QSettings settings( settings_file, QSettings::NativeFormat);
+   QSettings settings;
    ui.externals_TV->setColumnWidth( 0, settings.value( SET_COLUMN_W1, 100 ).toInt() );
    ui.externals_TV->setColumnWidth( 1, settings.value( SET_COLUMN_W2, 100 ).toInt() );
    ui.externals_TV->setColumnWidth( 2, settings.value( SET_COLUMN_W3, 100 ).toInt() );
@@ -91,7 +94,7 @@ void Main_Window::load_column_settings( void )
 
 void Main_Window::save_settings( void )
 {
-   QSettings settings( settings_file, QSettings::NativeFormat);
+   QSettings settings;
    settings.setValue( SET_CP_PATH, working_cp_path );
 
    // we only save the column settings, if we have a valid
@@ -161,8 +164,7 @@ Main_Window::operator QString()
 {
    QString s;
    QTextStream ts(&s);
-   ts  << "Main_Window (" << reinterpret_cast< void* >( this ) << "): "
-       << "setting-file=" << settings_file;
+   ts  << "Main_Window (" << reinterpret_cast< void* >( this ) << "): ";
    return s;
 }
 

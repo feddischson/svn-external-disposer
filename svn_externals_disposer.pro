@@ -22,6 +22,9 @@ SOURCES     += src/main.cpp
 SOURCES     += src/mainwindow.cpp
 SOURCES     += src/data_model.cpp
 
+VERSION = "0.1.0"
+
+DEFINES += _APP_VERSION=\\\"$$VERSION\\\"
 
 target.path = /usr/local/bin
 INSTALLS += target

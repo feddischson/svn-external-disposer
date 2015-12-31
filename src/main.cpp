@@ -20,16 +20,20 @@
 //
 //
 
-#include <mainwindow.h>
 #include <QDebug>
+
+#include "mainwindow.h"
+#include "const.h"
+
 using namespace SVN_EXTERNALS_DISPOSER;
 int main( int argc, char *argv[] )
 {
+    QCoreApplication::setOrganizationName( ORGANIZATION_NAME );
+    QCoreApplication::setOrganizationDomain( ORGANIZATION_DOMAIN );
+    QCoreApplication::setApplicationName( APP_NAME );
+    QCoreApplication::setApplicationVersion( APP_VERSION );
     QApplication app(argc, argv);
-
     Main_Window w;
     w.show();
-
-    qDebug() << w;
     return app.exec();
 }
