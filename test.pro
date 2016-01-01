@@ -19,10 +19,10 @@ QT          += testlib
 DEFINES += TESTING
 
 HEADERS     += include/const.h
-HEADERS     += include/data_model.h
-HEADERS     += test/test_data_model.h
-SOURCES     += src/data_model.cpp
-SOURCES     += test/test_data_model.cpp
+HEADERS     += include/external.h
+HEADERS     += test/test_external.h
+SOURCES     += src/external.cpp
+SOURCES     += test/test_external.cpp
 SOURCES     += test/main.cpp
 
 VERSION = "0.1.0"

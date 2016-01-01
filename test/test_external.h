@@ -31,7 +31,7 @@ namespace SVN_EXTERNALS_DISPOSER
 
 /// @author feddischson
 /// @brief Test class to test Data_Model
-class Test_Data_Model : public QObject
+class Test_External : public QObject
 {
 
    Q_OBJECT
@@ -52,38 +52,38 @@ public:
 
    /// @author feddischson
    /// @brief Ctor: not implemented!
-   explicit Test_Data_Model( QObject *parent = nullptr );
+   explicit Test_External( QObject *parent = nullptr );
 
 
    /// @author feddischson
    /// @brief  Copy ctor: not implemented!
-   Test_Data_Model(const Test_Data_Model & m) = delete;
+   Test_External(const Test_External & m) = delete;
 
 
    /// @author feddischson
    /// @brief  Assignment operator: not implemented!
-   Test_Data_Model& operator= (const Test_Data_Model & m) = delete;
+   Test_External& operator= (const Test_External & m) = delete;
 
 
    /// @author feddischson
    /// @brief  Move constructor: not implemented!
-   Test_Data_Model( Test_Data_Model && rhs ) = delete;
+   Test_External( Test_External && rhs ) = delete;
 
 
    /// @author feddischson
    /// @brief  Move assignment operator: not implemented!
-   Test_Data_Model& operator=( Test_Data_Model && rhs ) = delete;
+   Test_External& operator=( Test_External && rhs ) = delete;
 
 
    /// @author feddischson
    /// @brief Standard dtor
-   ~Test_Data_Model() = default;
+   ~Test_External() = default;
 
 
 private:
 
 
-}; // class Test_Data_Model
+}; // class Test_External
 
 }; // namespace SVN_EXTERNALS_DISPOSER
 

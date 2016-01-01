@@ -22,6 +22,7 @@
 #define _SVN_EXTERNALS_DISPOSER_CONST_H
 #include <QObject>
 #include <QString>
+#include <QColor>
 
 namespace SVN_EXTERNALS_DISPOSER
 {

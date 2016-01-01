@@ -38,14 +38,10 @@ class External
     const QString & peg_revision,
     const QString & operative_revision,
     const QString & storage_path
-         ) : 
-      local_path         ( local_path         ),
-      url                ( url                ),
-      peg_revision       ( peg_revision       ),
-      operative_revision ( operative_revision ),
-      storage_path       ( storage_path       ),
-      valid( true ),
-      modified( false ){ }
+         );
+
+   /// @brief Try to crate create a valid instance by parsing a property entry.
+   External( const QString & prop_entry, const QString & path );
 
    /// @brief In case of no data is provided, we create an invalid instance.
    External( ) : valid( false ), modified( false ) { }
@@ -62,19 +58,10 @@ class External
    ~External ()                                = default;
    /// @}
 
-   /// @brief QSTring operator
-   virtual operator QString()
-   {
-      QString s;
-      QTextStream ts(&s);
-      if( operative_revision.toString().length() > 0 )
-         ts << "-r" << operative_revision.toString() << " ";
-      ts << url.toString();
-      if( peg_revision.toString().length() > 0 )
-         ts << "@" << peg_revision.toString();
-      ts << " " << local_path.toString();
-      return s;
-   }
+   /// @brief QString operator: The resulting string is a svn:externals property 
+   /// @remark The new syntax (>= svn version 1.5) is returned, even if the
+   ///         instance is parsed via old syntax (prior svn version 1.5).
+   virtual operator QString();
 
    /// @defgroup external_data External content
    /// @{
@@ -90,6 +77,16 @@ class External
 
    /// 
    bool modified;
+
+
+   /// @brief  Regular expression matcher for the current svn:externals syntax
+   static const QRegExp external_matcher;
+
+   /// @brief  Regular expression matcher for the old svn:externals syntax
+   static const QRegExp old_external_matcher;
+
+
+
 };
 
 /// @brief  An alias for shared pointers of External

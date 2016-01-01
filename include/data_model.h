@@ -132,21 +132,8 @@ private:
       const QString       & property );
 
 
-   /// @brief  Parses svn:external entries via regular expressions
-   /// @return A External instance, which holds all information. 
-   ///         If parings fails, External.valid is set to false.
-   ///
-   T_SP_External parse_external( const QString & entry, const QString & path );
-
-
    /// @brief  List for our header extension
    QList< QVariant > header;
-
-   /// @brief  Regular expression matcher for the current svn:externals syntax
-   QRegExp external_matcher;
-
-   /// @brief  Regular expression matcher for the old svn:externals syntax
-   QRegExp old_external_matcher;
 
    /// @brief  Holds all externals (via QSharedDataPointer).
    ///         The absolute local path is used as key

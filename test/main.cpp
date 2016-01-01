@@ -22,8 +22,8 @@
 
 #include <QTest>
 
-#include "test_data_model.h"
+#include "test_external.h"
 
 using namespace SVN_EXTERNALS_DISPOSER;
 
-QTEST_MAIN( Test_Data_Model );
+QTEST_MAIN( Test_External );

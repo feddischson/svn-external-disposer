@@ -33,9 +33,7 @@ namespace SVN_EXTERNALS_DISPOSER
 
 
 Data_Model::Data_Model( QObject *parent )
-   : QFileSystemModel( parent ),
-     external_matcher( EXTERNAL_REGEX ),
-     old_external_matcher( OLD_EXTERNAL_REGEX )
+   : QFileSystemModel( parent )
 {
    header  << GUI_HEAD_TARGET
            << GUI_HEAD_EXTERNAL  
@@ -97,6 +95,7 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
 
    return QFileSystemModel::data( index, role );
 }
+
 
 bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int role)
 {
@@ -326,7 +325,7 @@ void Data_Model::extract_externals(
          property.split( SVN_EXTERNAL_SEP, QString::SkipEmptyParts )  ) 
    {
 
-      T_SP_External external =  parse_external( str, path );
+      T_SP_External external( new External( str, path ) );
 
       if( !external )
          continue;
@@ -355,41 +354,6 @@ void Data_Model::extract_externals(
 
 
    }
-}
-
-
-T_SP_External Data_Model::parse_external( const QString & entry, const QString & path )
-{
-   int pos;
-
-   // first: try the old syntax
-   pos = old_external_matcher.indexIn( entry );
-   if( pos > -1 )
-   {
-      return T_SP_External( new External(  
-            old_external_matcher.cap(1), // local path
-            old_external_matcher.cap(4), // url
-            QString(""),                 // peg-revision
-            old_external_matcher.cap(3), // operative-revision
-            path ) );
-   }
-   else
-   {
-      // second: try the current syntax
-      pos = external_matcher.indexIn( entry );
-      if( pos > -1 )
-      {
-         return T_SP_External( new External(
-            external_matcher.cap(6), // local path
-            external_matcher.cap(3), // url
-            external_matcher.cap(5), // peg
-            external_matcher.cap(2), // operative
-            path ) );
-      }
-   }
-
-   // returns an invalid External struct
-   return T_SP_External( new External() );
 }
 
 
