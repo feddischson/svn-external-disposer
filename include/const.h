@@ -83,6 +83,8 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString GUI_HEAD_PATH         = QObject::tr( "Defined at"         );
    /// @}
 
+   static const QColor COL_MODIFIED          = Qt::yellow;
+
    /// 
    /// @defgroup regex Regular Expressions
    /// @brief Two regular exressions to match the following examples:

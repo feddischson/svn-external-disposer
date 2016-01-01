@@ -24,7 +24,7 @@
 #include <QDir>
 #include <QProcess>
 #include <QDomDocument>
-
+#include <QBrush>
 #include "const.h"
 #include "data_model.h"
 
@@ -50,6 +50,19 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
    if (!index.isValid())
        QFileSystemModel::data( index, role );
 
+   if( role == Qt::BackgroundRole )
+   {
+
+      QString path = QFileSystemModel::filePath( index );
+      External external = external_map.value( path );
+      if( !external.valid )
+         return QFileSystemModel::data( index, role );
+
+      if( external.modified )
+         return QBrush( COL_MODIFIED );
+      else
+         return QFileSystemModel::data( index, role );
+   }
 
    if( index.column() >= 4)
    {
@@ -81,6 +94,78 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
    return QFileSystemModel::data( index, role );
 }
 
+bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int role)
+{
+   if( index.column() >= 4 )
+   {
+
+      if( role == Qt::EditRole )
+      {
+
+         QString path = QFileSystemModel::filePath( index );
+         External external = external_map.value( path );
+         if( !external.valid )
+            return false;
+
+         switch( index.column() - 4 )
+         {
+            case  0: 
+               {
+                  if( external.local_path != value )
+                  {
+                     external.local_path = value;
+                     external.modified = true;
+                     break;
+                  }
+               }
+            case  1: 
+               {
+                  if( external.url != value )
+                  {
+                     external.url = value;
+                     external.modified = true; 
+                     break;
+                  }
+               }
+            case  2: 
+               {
+                  if( external.peg_revision != value )
+                  {
+                     external.peg_revision = value;
+                     external.modified = true; 
+                     break;
+                  }
+               }
+            case  3: 
+               {
+                  if( external.operative_revision != value )
+                  {
+                     external.operative_revision = value;
+                     external.modified = true; 
+                     break;
+                  }
+               }
+            case  4: 
+               {
+                  if( external.storage_path != value )
+                  {
+                     external.storage_path = value;
+                     external.modified = true; 
+                     break;
+                  }
+               }
+            default: return false;
+         }
+         external_map.insert( path, external );
+         return true;
+      }
+      else
+         return false;
+   }
+   else
+      return QFileSystemModel::setData( index, value, role );
+}
+
 
 Qt::ItemFlags Data_Model::flags(const QModelIndex &index) const 
 {
@@ -88,7 +173,7 @@ Qt::ItemFlags Data_Model::flags(const QModelIndex &index) const
       return QFileSystemModel::flags( index );
 
    if( index.column() >= 4)
-      return QAbstractItemModel::flags(index)  | Qt::ItemIsSelectable;
+      return QAbstractItemModel::flags(index)  | Qt::ItemIsSelectable | Qt::ItemIsEditable;
    else
       return QFileSystemModel::flags( index );
 }

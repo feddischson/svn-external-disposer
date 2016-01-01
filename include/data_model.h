@@ -79,6 +79,8 @@ public:
    /// @return The content of one cell
    QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
 
+   /// @brief  Sets data to an entry
+   bool setData(const QModelIndex & index, const QVariant & value, int role) Q_DECL_OVERRIDE;
 
    /// @brief  Provides flags for an entry
    Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
@@ -116,10 +118,11 @@ private:
          peg_revision       ( peg_revision       ),
          operative_revision ( operative_revision ),
          storage_path       ( storage_path       ),
-         valid( true ) { }
+         valid( true ),
+         modified( false ){ }
 
       /// @brief In case of no data is provided, we create an invalid instance.
-      External( ) : valid( false ) { }
+      External( ) : valid( false ), modified( false ) { }
 
 
       /// @defgroup external_default Default Ctors, Dtor and operators
@@ -144,6 +147,9 @@ private:
 
       /// @brief valid-flag
       bool valid;
+
+      /// 
+      bool modified;
    };
 
 
