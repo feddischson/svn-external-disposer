@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QTextStream>
 #include <QFileSystemModel>
-#include <QMap>
+#include <QHash>
 #include <QRegExp>
 
 #include "external.h"
@@ -147,7 +147,7 @@ private:
 
    /// @brief  Holds all externals (via QSharedDataPointer).
    ///         The absolute local path is used as key
-   QMap< QString, T_SP_External > external_map;
+   QHash< QString, T_SP_External > external_map;
 
 
 
