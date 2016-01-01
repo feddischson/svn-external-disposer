@@ -26,6 +26,7 @@
 #include <QMap>
 #include <QRegExp>
 
+#include "external.h"
 
 namespace SVN_EXTERNALS_DISPOSER
 {
@@ -100,58 +101,8 @@ public:
 private:
 
 
-
-   /// @brief Represents a external entry. The content is stored in QVariant 
-   ///        attributes
-   struct External
-   {  
-      /// @brief Create a valid instance with all necessary information.
-      External( 
-       const QString & local_path,
-       const QString & url,
-       const QString & peg_revision,
-       const QString & operative_revision,
-       const QString & storage_path
-            ) : 
-         local_path         ( local_path         ),
-         url                ( url                ),
-         peg_revision       ( peg_revision       ),
-         operative_revision ( operative_revision ),
-         storage_path       ( storage_path       ),
-         valid( true ),
-         modified( false ){ }
-
-      /// @brief In case of no data is provided, we create an invalid instance.
-      External( ) : valid( false ), modified( false ) { }
-
-
-      /// @defgroup external_default Default Ctors, Dtor and operators
-      /// The defult implementation of (move) copy-ctors, (move) assignment 
-      /// operators and destructor is used.
-      /// @{
-      External( const External & e )              = default;
-      External& operator= (const External & rhs ) = default;
-      External & operator=( External  && rhs )    = default;
-      External ( External  && rhs )               = default;
-      ~External ()                                = default;
-      /// @}
-
-      /// @defgroup external_data External content
-      /// @{
-      QVariant local_path;
-      QVariant url;
-      QVariant peg_revision;
-      QVariant operative_revision;
-      QVariant storage_path;
-      /// @}
-
-      /// @brief valid-flag
-      bool valid;
-
-      /// 
-      bool modified;
-   };
-
+   /// @brief  Function to find an external entry in our internal map
+   T_SP_External get_external( const QModelIndex & index ) const;
 
    /// @brief  Initializes the svn:externals map external_map
    ///         by scanning the given directory.
@@ -182,7 +133,7 @@ private:
    /// @return A External instance, which holds all information. 
    ///         If parings fails, External.valid is set to false.
    ///
-   External parse_external( const QString & entry, const QString & path );
+   T_SP_External parse_external( const QString & entry, const QString & path );
 
 
    /// @brief  List for our header extension
@@ -194,9 +145,10 @@ private:
    /// @brief  Regular expression matcher for the old svn:externals syntax
    QRegExp old_external_matcher;
 
-   /// @brief  Holds all externals
+   /// @brief  Holds all externals (via QSharedDataPointer).
    ///         The absolute local path is used as key
-   QMap< QString, External > external_map;
+   QMap< QString, T_SP_External > external_map;
+
 
 
 }; // class Data_Model

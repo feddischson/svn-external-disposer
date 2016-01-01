@@ -18,12 +18,12 @@ FORMS += forms/MainWindow.ui
 HEADERS     += include/const.h
 HEADERS     += include/mainwindow.h
 HEADERS     += include/data_model.h
+HEADERS     += include/external.h
 SOURCES     += src/main.cpp
 SOURCES     += src/mainwindow.cpp
 SOURCES     += src/data_model.cpp
 
 VERSION = "0.1.0"
-
 DEFINES += _APP_VERSION=\\\"$$VERSION\\\"
 
 target.path = /usr/local/bin

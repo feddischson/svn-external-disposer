@@ -44,6 +44,12 @@ Data_Model::Data_Model( QObject *parent )
            << GUI_HEAD_PATH;
 }
 
+T_SP_External Data_Model::get_external( const QModelIndex & index ) const
+{
+   QString path = QFileSystemModel::filePath( index );
+   return external_map.value( path );
+}
+
 
 QVariant Data_Model::data(const QModelIndex &index, int role) const 
 {
@@ -53,12 +59,11 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
    if( role == Qt::BackgroundRole )
    {
 
-      QString path = QFileSystemModel::filePath( index );
-      External external = external_map.value( path );
-      if( !external.valid )
+      T_SP_External external = get_external( index );
+      if( !external )
          return QFileSystemModel::data( index, role );
 
-      if( external.modified )
+      if( external->modified )
          return QBrush( COL_MODIFIED );
       else
          return QFileSystemModel::data( index, role );
@@ -71,20 +76,19 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
         return QVariant();
       else
       {
-         QString path = QFileSystemModel::filePath( index );
-         External external = external_map.value( path );
+         T_SP_External external = get_external( index );
 
-         if( !external.valid )
+         if( !external )
             return QVariant();
 
          //qDebug() << "is an external " << QFileSystemModel::filePath( index );
          switch( index.column() - 4 )
          {
-            case  0: return external.local_path;
-            case  1: return external.url;
-            case  2: return external.peg_revision;
-            case  3: return external.operative_revision;
-            case  4: return external.storage_path;
+            case  0: return external->local_path;
+            case  1: return external->url;
+            case  2: return external->peg_revision;
+            case  3: return external->operative_revision;
+            case  4: return external->storage_path;
             default: return QVariant();
          }
 
@@ -102,61 +106,60 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
       if( role == Qt::EditRole )
       {
 
-         QString path = QFileSystemModel::filePath( index );
-         External external = external_map.value( path );
-         if( !external.valid )
+         T_SP_External external = get_external( index );
+         if( !external )
             return false;
 
          switch( index.column() - 4 )
          {
             case  0: 
                {
-                  if( external.local_path != value )
+                  if( external->local_path != value )
                   {
-                     external.local_path = value;
-                     external.modified = true;
+                     external->local_path = value;
+                     external->modified = true;
                      break;
                   }
                }
             case  1: 
                {
-                  if( external.url != value )
+                  if( external->url != value )
                   {
-                     external.url = value;
-                     external.modified = true; 
+                     external->url = value;
+                     external->modified = true; 
                      break;
                   }
                }
             case  2: 
                {
-                  if( external.peg_revision != value )
+                  if( external->peg_revision != value )
                   {
-                     external.peg_revision = value;
-                     external.modified = true; 
+                     external->peg_revision = value;
+                     external->modified = true; 
                      break;
                   }
                }
             case  3: 
                {
-                  if( external.operative_revision != value )
+                  if( external->operative_revision != value )
                   {
-                     external.operative_revision = value;
-                     external.modified = true; 
+                     external->operative_revision = value;
+                     external->modified = true; 
                      break;
                   }
                }
             case  4: 
                {
-                  if( external.storage_path != value )
+                  if( external->storage_path != value )
                   {
-                     external.storage_path = value;
-                     external.modified = true; 
+                     external->storage_path = value;
+                     external->modified = true; 
                      break;
                   }
                }
             default: return false;
          }
-         external_map.insert( path, external );
+         external_map.insert( QFileSystemModel::filePath( index ), external );
          return true;
       }
       else
@@ -284,29 +287,29 @@ void Data_Model::extract_externals(
          property.split( SVN_EXTERNAL_SEP, QString::SkipEmptyParts )  ) 
    {
 
-      External external =  parse_external( str, path );
+      T_SP_External external =  parse_external( str, path );
 
-      if( !external.valid )
+      if( !external )
          continue;
 
-      QDir local_dir( external.local_path.toString() );
+      QDir local_dir( external->local_path.toString() );
 
       // try it as an absolute path
-      if( QDir( external.local_path.toString() ).exists() )
+      if( QDir( external->local_path.toString() ).exists() )
       {
-         external_map.insert( external.local_path.toString(), external );
+         external_map.insert( external->local_path.toString(), external );
       }
       else 
       // try it as a relative path
       {
-         QString abs_path = QDir( path ).filePath( external.local_path.toString() );
+         QString abs_path = QDir( path ).filePath( external->local_path.toString() );
          QDir abs_dir( abs_path );
          if( abs_dir.exists() )
          {
             external_map.insert( abs_path, external );
          }
          else
-            qDebug() << "cannot find " << external.local_path.toString() << "in " << path;
+            qDebug() << "cannot find " << external->local_path.toString() << "in " << path;
       }
 
 
@@ -314,7 +317,7 @@ void Data_Model::extract_externals(
 }
 
 
-Data_Model::External Data_Model::parse_external( const QString & entry, const QString & path )
+T_SP_External Data_Model::parse_external( const QString & entry, const QString & path )
 {
    int pos;
 
@@ -322,12 +325,12 @@ Data_Model::External Data_Model::parse_external( const QString & entry, const QS
    pos = old_external_matcher.indexIn( entry );
    if( pos > -1 )
    {
-      return External(  
+      return T_SP_External( new External(  
             old_external_matcher.cap(1), // local path
             old_external_matcher.cap(4), // url
             QString(""),                 // peg-revision
             old_external_matcher.cap(3), // operative-revision
-            path );
+            path ) );
    }
    else
    {
@@ -335,17 +338,17 @@ Data_Model::External Data_Model::parse_external( const QString & entry, const QS
       pos = external_matcher.indexIn( entry );
       if( pos > -1 )
       {
-         return External(
+         return T_SP_External( new External(
             external_matcher.cap(6), // local path
             external_matcher.cap(3), // url
             external_matcher.cap(5), // peg
             external_matcher.cap(2), // operative
-            path );
+            path ) );
       }
    }
 
    // returns an invalid External struct
-   return External();
+   return T_SP_External( new External() );
 }
 
 

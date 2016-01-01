@@ -25,4 +25,6 @@ SOURCES     += src/data_model.cpp
 SOURCES     += test/test_data_model.cpp
 SOURCES     += test/main.cpp
 
+VERSION = "0.1.0"
+DEFINES += _APP_VERSION=\\\"$$VERSION\\\"
 
