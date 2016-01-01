@@ -45,6 +45,7 @@ namespace SVN_EXTERNALS_DISPOSER
    /// @{
    static const QString SVN_CMD           = "svn";
    static const QString SVN_PROPGET       = "propget";
+   static const QString SVN_PROPSET       = "propset";
    static const QString SVN_INFO          = "info";
    static const QString SVN_EXTERNALS     = "svn:externals";
    static const QString SVN_XML           = "--xml";

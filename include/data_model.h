@@ -98,6 +98,10 @@ public:
    /// @brief  Sets the root path (for this and fpr the super class)
    QModelIndex setRootPath( const QString & new_path );
 
+
+   /// @brief  Saves the modified externals
+   bool save_externals( void );
+
 private:
 
 
@@ -128,7 +132,6 @@ private:
       const QString       & property );
 
 
-
    /// @brief  Parses svn:external entries via regular expressions
    /// @return A External instance, which holds all information. 
    ///         If parings fails, External.valid is set to false.
@@ -149,9 +152,10 @@ private:
    ///         The absolute local path is used as key
    QHash< QString, T_SP_External > external_map;
 
-
+   QMultiMap< QString, T_SP_External > property_map;
 
 }; // class Data_Model
+
 
 }; // namespace SVN_EXTERNALS_DISPOSER
 

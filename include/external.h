@@ -62,6 +62,20 @@ class External
    ~External ()                                = default;
    /// @}
 
+   /// @brief QSTring operator
+   virtual operator QString()
+   {
+      QString s;
+      QTextStream ts(&s);
+      if( operative_revision.toString().length() > 0 )
+         ts << "-r" << operative_revision.toString() << " ";
+      ts << url.toString();
+      if( peg_revision.toString().length() > 0 )
+         ts << "@" << peg_revision.toString();
+      ts << " " << local_path.toString();
+      return s;
+   }
+
    /// @defgroup external_data External content
    /// @{
    QVariant local_path;

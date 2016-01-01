@@ -159,7 +159,6 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
                }
             default: return false;
          }
-         external_map.insert( QFileSystemModel::filePath( index ), external );
          return true;
       }
       else
@@ -221,6 +220,46 @@ void Data_Model::setup_model_data(
          // recursive call to add all sub-paths
          setup_model_data( child_path );
    }
+}
+
+bool Data_Model::save_externals( void )
+{
+   bool result = true;
+   foreach( auto  path, property_map.uniqueKeys() )
+   {
+      auto i = property_map.find( path );
+      QString property = "";
+      while (i != property_map.end() && i.key() == path)
+      {
+         property = *(i.value()) + "\n" + property;
+         i++;
+      }
+
+      // write the svn:external via svn propset
+      QProcess process;
+      process.start( SVN_CMD, QStringList()
+            << SVN_PROPSET
+            << SVN_EXTERNALS
+            << SVN_DEPTH
+            << SVN_FILES
+            << property
+            << path
+            );
+      // wait until the process is done
+      // and check the result
+      if( process.waitForFinished( SYS_PROCESS_TIMEOUT ) && 
+          process.exitCode() == 0 )
+      {
+         // nothing todo here
+      }
+      else
+      {
+         qDebug() << "Failed to set properties";
+         qDebug() << process.readAllStandardError();
+         result = false;
+      }
+   }
+   return result;
 }
 
 
@@ -298,6 +337,7 @@ void Data_Model::extract_externals(
       if( QDir( external->local_path.toString() ).exists() )
       {
          external_map.insert( external->local_path.toString(), external );
+         property_map.insertMulti( path, external );
       }
       else 
       // try it as a relative path
@@ -307,6 +347,7 @@ void Data_Model::extract_externals(
          if( abs_dir.exists() )
          {
             external_map.insert( abs_path, external );
+            property_map.insertMulti( path, external );
          }
          else
             qDebug() << "cannot find " << external->local_path.toString() << "in " << path;
@@ -354,10 +395,11 @@ T_SP_External Data_Model::parse_external( const QString & entry, const QString &
 
 QModelIndex Data_Model::setRootPath( const QString & new_path )
 {
+   external_map.clear();
+   property_map.clear();
    setup_model_data( new_path );
    return QFileSystemModel::setRootPath( new_path );
 }
-
 
 }; // namespace SVN_EXTERNALS_DISPOSER
 

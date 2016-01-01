@@ -86,10 +86,6 @@ private:
 
    /// @author feddischson
    /// @brief
-   QString settings_file;
-
-   /// @author feddischson
-   /// @brief
    QString working_cp_path;
 
    /// @author feddischson
@@ -128,6 +124,9 @@ private slots:
    /// @brief
    void on_working_copy_browse_PB_clicked( void );
 
+   /// @author feddischson
+   /// @brief
+   void on_save_PB_clicked( void );
 
    /// @author feddischson
    /// @brief
