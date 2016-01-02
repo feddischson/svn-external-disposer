@@ -133,6 +133,11 @@ private slots:
    void on_expand_PB_clicked( void );
 
 
+   /// @author feddischson
+   /// @brief
+   void on_reset_PB_clicked( void );
+
+
 }; // class Main_Window
 
 }; // namespace SVN_EXTERNALS_DISPOSER

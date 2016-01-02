@@ -47,6 +47,15 @@ private slots:
    void test_external6();
    void test_external7();
 
+
+   void test_comparison1();
+   void test_comparison2();
+   void test_comparison3();
+   void test_comparison4();
+   void test_comparison5();
+   void test_comparison6();
+   void test_comparison7();
+   void test_comparison8();
 public:
 
 

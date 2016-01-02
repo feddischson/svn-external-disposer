@@ -157,10 +157,20 @@ void Main_Window::on_expand_PB_clicked( void )
    }
 }
 
+
+void Main_Window::on_reset_PB_clicked( void )
+{
+   save_settings();
+   update_tree();
+}
+
+
 void Main_Window::on_save_PB_clicked( void )
 {
    if( data_model != nullptr )
       data_model->save_externals( );
+   save_settings();
+   update_tree();
 }
 
 

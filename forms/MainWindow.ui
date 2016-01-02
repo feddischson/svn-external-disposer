@@ -55,6 +55,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="reset_PB">
+        <property name="text">
+         <string>Reset</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="save_PB">
         <property name="text">
          <string>Save</string>

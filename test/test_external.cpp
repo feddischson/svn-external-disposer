@@ -148,6 +148,125 @@ void  Test_External::test_external7()
 }
 
 
+
+void Test_External::test_comparison1()
+{
+  QString se1 = "http://192.168.123.123@2 dir";
+  QString se2 = "http://192.168.123.123@3 dir";
+  T_SP_External e1( new External( 
+        se1,
+        "some_dir" ) );
+  T_SP_External e2( new External( 
+        se2,
+        "some_dir" ) );
+  QCOMPARE( e1 == e2, false );
+}
+
+
+
+void Test_External::test_comparison2()
+{
+  QString se1 = "http://192.168.123.123@2 dir";
+  QString se2 = "http://192.168.123.123@2 dir";
+  T_SP_External e1( new External( 
+        se1,
+        "some_dir" ) );
+  T_SP_External e2( new External( 
+        se2,
+        "some_dir" ) );
+  QCOMPARE( e1 == e2, true );
+}
+
+
+
+void Test_External::test_comparison3()
+{
+  QString se1 = "http://192.168.123.123@2 dir1";
+  QString se2 = "http://192.168.123.123@2 dir2";
+  T_SP_External e1( new External( 
+        se1,
+        "some_dir" ) );
+  T_SP_External e2( new External( 
+        se2,
+        "some_dir" ) );
+  QCOMPARE( e1 == e2, false );
+}
+
+
+
+void Test_External::test_comparison4()
+{
+  QString se1 = "http://192.168.123.123@2 dir";
+  QString se2 = "http://192.168.123.123@2 dir";
+  T_SP_External e1( new External( 
+        se1,
+        "some_dir" ) );
+  T_SP_External e2( new External( 
+        se2,
+        "some_dirx" ) );
+  QCOMPARE( e1 == e2, false );
+}
+
+
+void Test_External::test_comparison5()
+{
+  QString se1 = "http://192.168.123.123@2 dir";
+  QString se2 = "http://192.168.123.111@2 dir";
+  T_SP_External e1( new External( 
+        se1,
+        "some_dir" ) );
+  T_SP_External e2( new External( 
+        se2,
+        "some_dir" ) );
+  QCOMPARE( e1 == e2, false );
+}
+
+
+
+void Test_External::test_comparison6()
+{
+  QString se1 = "http://192.168.123.123@2 dir";
+  QString se2 = " http://192.168.123.123@2 dir";
+  T_SP_External e1( new External( 
+        se1,
+        "some_dir" ) );
+  T_SP_External e2( new External( 
+        se2,
+        "some_dir" ) );
+  QCOMPARE( e1 == e2, true );
+}
+
+
+void Test_External::test_comparison7()
+{
+  QString se1 = "  -r  3 http://192.168.123.123@2 dir";
+  QString se2 = "-r3 http://192.168.123.123@2 dir";
+  T_SP_External e1( new External( 
+        se1,
+        "some_dir" ) );
+  T_SP_External e2( new External( 
+        se2,
+        "some_dir" ) );
+  QCOMPARE( e1 == e2, true );
+}
+
+
+void Test_External::test_comparison8()
+{
+  QString se1 = "  -r  3 http://192.168.123.123@2 dir";
+  QString se2 = "     -r4 http://192.168.123.123@2 dir";
+  T_SP_External e1( new External( 
+        se1,
+        "some_dir" ) );
+  T_SP_External e2( new External( 
+        se2,
+        "some_dir" ) );
+  QCOMPARE( e1 == e2, false );
+}
+
+
+
+
 }; // namespace SVN_EXTERNALS_DISPOSER
 
 

@@ -22,6 +22,7 @@
 #define _SVN_EXTERNALS_DISPOSER_EXTERNAL_H
 #include <QObject>
 #include <QTextStream>
+#include <QSharedPointer>
 
 namespace SVN_EXTERNALS_DISPOSER
 {
@@ -75,9 +76,10 @@ class External
    /// @brief valid-flag
    bool valid;
 
-   /// 
+   /// @brief modified-flag
    bool modified;
 
+   private:
 
    /// @brief  Regular expression matcher for the current svn:externals syntax
    static const QRegExp external_matcher;
@@ -85,12 +87,17 @@ class External
    /// @brief  Regular expression matcher for the old svn:externals syntax
    static const QRegExp old_external_matcher;
 
-
-
 };
 
 /// @brief  An alias for shared pointers of External
 using T_SP_External = QSharedPointer< External >;
+
+/// @defgroup external_comp Comparison Operators
+/// @{
+bool operator== ( const T_SP_External & e1, const T_SP_External & e2 );
+bool operator!= ( const T_SP_External & e1, const T_SP_External & e2 );
+/// @}
+
 
 }; // namespace SVN_EXTERNALS_DISPOSER
 

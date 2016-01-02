@@ -27,11 +27,13 @@
 namespace SVN_EXTERNALS_DISPOSER
 {
 
-   /// @brief The name of this tool
+   /// @defgroup app_const  Application naming constants
+   /// @{
    static const QString APP_VERSION          = _APP_VERSION;
    static const QString APP_NAME             = "SVN-Externals-Disposer";
    static const QString ORGANIZATION_NAME    = "SVN-Externals-Disposer";
    static const QString ORGANIZATION_DOMAIN  = "SVN.Externals.Disposer";
+   /// @}
 
    /// @defgroup xml_const  XML string constants
    /// Used to extract data from the xml output of svn propget --xml

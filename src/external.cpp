@@ -21,7 +21,6 @@
 #include "external.h"
 #include "const.h"
 
-
 namespace SVN_EXTERNALS_DISPOSER
 {
 
@@ -92,8 +91,26 @@ External::operator QString()
 }
 
 
+bool operator== ( const T_SP_External & e1, const T_SP_External & e2 )
+{
+   return e1->local_path          == e2->local_path   && 
+          e1->url                 == e2->url          &&
+          e1->peg_revision        == e2->peg_revision &&
+          e1->operative_revision  == e2->operative_revision &&
+          e1->storage_path        == e2->storage_path;
+}
+
+bool operator!= ( const T_SP_External & e1, const T_SP_External & e2 )
+{
+   return !( e1 == e2 );
+}
+
+
+
 const QRegExp External::external_matcher( EXTERNAL_REGEX );
 const QRegExp External::old_external_matcher( OLD_EXTERNAL_REGEX );
+
+
 
 }; // namespace SVN_EXTERNALS_DISPOSER
 

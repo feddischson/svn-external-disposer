@@ -104,6 +104,11 @@ public:
 
 private:
 
+   /// @broef Creates a backup of the external information
+   void backup( void );
+
+   /// @brief Returns true for a giben external path, if the externals is modified.
+   bool is_external_modified( const QString & path ) const;
 
    /// @brief  Function to find an external entry in our internal map
    T_SP_External get_external( const QModelIndex & index ) const;
@@ -139,7 +144,19 @@ private:
    ///         The absolute local path is used as key
    QHash< QString, T_SP_External > external_map;
 
+   /// @brief  Maps the paths (where the property is defined) to the external items
    QMultiMap< QString, T_SP_External > property_map;
+
+
+
+   /// @brief  Backup of external_map
+   QHash< QString, T_SP_External > external_map_backup;
+
+   /// @brief  Backup of property_map
+   QMultiMap< QString, T_SP_External > property_map_backup;
+
+   /// @brief The root path which points to a local SVN working copy
+   QString root_path;
 
 }; // class Data_Model
 

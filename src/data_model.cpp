@@ -33,7 +33,8 @@ namespace SVN_EXTERNALS_DISPOSER
 
 
 Data_Model::Data_Model( QObject *parent )
-   : QFileSystemModel( parent )
+   : QFileSystemModel( parent ),
+   root_path( "" )
 {
    header  << GUI_HEAD_TARGET
            << GUI_HEAD_EXTERNAL  
@@ -49,6 +50,16 @@ T_SP_External Data_Model::get_external( const QModelIndex & index ) const
 }
 
 
+void backup_externals( void )
+{
+
+}
+
+void restore_externals( void )
+{
+
+}
+
 QVariant Data_Model::data(const QModelIndex &index, int role) const 
 {
    if (!index.isValid())
@@ -61,7 +72,9 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
       if( !external )
          return QFileSystemModel::data( index, role );
 
-      if( external->modified )
+      QString path = QFileSystemModel::filePath( index );
+
+      if( is_external_modified( path ) )
          return QBrush( COL_MODIFIED );
       else
          return QFileSystemModel::data( index, role );
@@ -228,11 +241,19 @@ bool Data_Model::save_externals( void )
    {
       auto i = property_map.find( path );
       QString property = "";
+      bool modified = false;
       while (i != property_map.end() && i.key() == path)
       {
+         if( i.value()->modified )
+            modified = true;
+
          property = *(i.value()) + "\n" + property;
          i++;
       }
+
+      if( !modified )
+         continue;
+
 
       // write the svn:external via svn propset
       QProcess process;
@@ -357,12 +378,40 @@ void Data_Model::extract_externals(
 }
 
 
+bool Data_Model::is_external_modified( const QString & path ) const
+{
+   return external_map.value( path ) != external_map_backup.value( path );
+}
+
 QModelIndex Data_Model::setRootPath( const QString & new_path )
 {
+   root_path = new_path;
    external_map.clear();
    property_map.clear();
    setup_model_data( new_path );
+   backup();
    return QFileSystemModel::setRootPath( new_path );
+}
+
+
+void Data_Model::backup( void )
+{
+   external_map_backup.clear();
+   property_map_backup.clear();
+   auto i = property_map.constBegin();
+   while( i != property_map.constEnd() )
+   {
+      // create a copy of the external (via copy-ctor)
+      T_SP_External backup( new External( *i.value( ) ) );
+
+      QString abs_path = QDir( i.key() ).filePath( backup->local_path.toString() );
+
+      // insert the backup into our back-storages
+      external_map_backup.insert( abs_path, backup);
+      property_map_backup.insert( i.key(), backup );
+      i++;
+   }
+
 }
 
 }; // namespace SVN_EXTERNALS_DISPOSER

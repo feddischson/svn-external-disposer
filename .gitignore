@@ -36,8 +36,7 @@ ui_*.h
 
 # the doxygen result
 doxydoc
-
 example
-test_externelator
+test_svn_externals_disposer
 Makefile
 svn_externals_disposer
