@@ -149,9 +149,6 @@ private slots:
    /// @brief
    void on_reset_PB_clicked( void );
 
-
-   void data_changed( void );
-
 }; // class Main_Window
 
 }; // namespace SVN_EXTERNALS_DISPOSER

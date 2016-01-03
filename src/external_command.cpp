@@ -19,68 +19,53 @@
 // <http://www.gnu.org/licenses/>. 
 //
 #include "external_command.h"
-
+#include "data_model.h"
+#include <QDebug>
 
 namespace SVN_EXTERNALS_DISPOSER
 {
 
 
-External_Command::External_Command( 
-         QHash< QString, T_SP_External > * external_map,
-         const QString       & path,
-         const T_SP_External & external, 
-         QUndoCommand *parent  ) 
-   : QUndoCommand ( parent       ),
-     external_map ( external_map ),
-     path         ( path         ),
-     new_external( new External( *external_map->value( path ) ) ),
-     old_external( new External( *external ) )
+External_Command::External_Command(
+      Data_Model          *data_model,
+      const QString      & path,
+      int                  index,
+      const QVariant     & new_value,
+      const QVariant     & old_value,
+      QUndoCommand *parent )
+   : QUndoCommand ( parent     ),
+     data_model   ( data_model ),
+     path         ( path       ),
+     index        ( index      ),
+     new_value    ( new_value  ),
+     old_value    ( old_value  ),
+     called_once  ( false )
 {
 }
 
 
 void External_Command::undo()
 {
-   *(external_map->value( path )) = *(old_external);
+   bool modified;
+   data_model->change_external( path, old_value, index, &modified );
 }
 
 void External_Command::redo()
 {
-   *(external_map->value( path )) = *(new_external);
+   bool modified;
+   if( called_once )
+      data_model->change_external( path, new_value, index, &modified );
+   else
+      called_once = true; 
 }
-
-
-#if 0
-bool External_Command::mergeWith(const QUndoCommand * cmd )
-{
-   const External_Command *external_command 
-      = static_cast< const External_Command* >( cmd );
-
-   if( external_command->external_map != external_map || 
-       external_command->path         != path             )
-      return false;
-
-   // this is not correct
-   *(new_external) = *(external_map->value( path ) );
-
-   return true;
-}
-
-
-int External_Command::id() const
-{ 
-   return External_Command_Id::Id; 
-}
-#endif
-
 
 External_Command::operator QString()
 {
    QString s;
    QTextStream ts(&s);
    ts  << "External_Command ("  << reinterpret_cast< void* >( this ) << "): \n"
-       << *old_external << "\n"
-       << *new_external;
+       << new_value.toString() << "\n"
+       << old_value.toString();
    return s;
 }
 

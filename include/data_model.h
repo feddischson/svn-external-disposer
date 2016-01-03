@@ -104,20 +104,48 @@ public:
    bool save_externals( void );
 
 
+   /// @brief  Provides an undo action (from QUndoStack)
    QAction * create_undo_action(QObject * parent, const QString & prefix = QString()) const;
 
+
+   /// @brief  Provides a redo action (from QUndoStack)
    QAction * create_redo_action(QObject * parent, const QString & prefix = QString()) const;
+
 
 private:
 
-   /// @broef Creates a backup of the external information
+
+   /// @brief Provide External_Command access to private data
+   friend class External_Command;
+
+
+   /// @brief Changes an external in external_map
+   /// @param path
+   ///         The path which is used to find the external in external_map
+   /// @param new_value
+   ///         The new value
+   /// @param index
+   ///         The column index (starting from 0)
+   /// @param modified [out]
+   ///         Is set to true, if the data is modified, otherwise to false
+   QVariant change_external(
+      const QString & path,
+      QVariant new_value,
+      int index,
+      bool * modified );
+
+
+   /// @brief Creates a backup of the external information
    void backup( void );
+
 
    /// @brief Returns true for a giben external path, if the externals is modified.
    bool is_external_modified( const QString & path ) const;
 
+
    /// @brief  Function to find an external entry in our internal map
    T_SP_External get_external( const QModelIndex & index ) const;
+
 
    /// @brief  Initializes the svn:externals map external_map
    ///         by scanning the given directory.

@@ -114,83 +114,114 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
 }
 
 
+QVariant Data_Model::change_external( 
+      const QString & path,
+      QVariant new_value,
+      int index,
+      bool * modified 
+      ) 
+{
+   QVariant old_value;
+   *modified = false;
+
+   // get the external
+   T_SP_External external = external_map.value( path );
+   if( !external )
+      return old_value;
+
+   switch( index )
+   {
+      case  0: 
+         {
+            if( external->local_path != new_value )
+            {
+               old_value = external->local_path;
+               external->local_path = new_value;
+               *modified = true;
+            }
+            break;
+         }
+      case  1: 
+         {
+            if( external->url != new_value )
+            {
+               old_value = external->url;
+               external->url = new_value;
+               *modified = true;
+            }
+            break;
+         }
+      case  2: 
+         {
+            if( external->peg_revision != new_value )
+            {
+               old_value = external->peg_revision;
+               external->peg_revision = new_value;
+               *modified = true;
+            }
+            break;
+         }
+      case  3: 
+         {
+            if( external->operative_revision != new_value )
+            {
+               old_value = external->operative_revision;
+               external->operative_revision = new_value;
+               *modified = true;
+            }
+            break;
+         }
+      case  4: 
+         {
+            if( external->storage_path != new_value )
+            {
+               old_value = external->storage_path;
+               external->storage_path = new_value;
+               *modified = true;
+            }
+            break;
+         }
+      default: 
+         {
+            *modified = false; 
+            break;
+         }
+   }
+
+   if( *modified )
+   {
+      external->modified = true;
+      emit( layoutChanged() );
+   }
+   return old_value;
+}
+
+
 bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int role)
 {
-   if( index.column() >= 4 )
+   int column = index.column() - 4;
+   if( column >= 0 )
    {
 
       if( role == Qt::EditRole )
       {
+         bool modified;
+         QString path = QFileSystemModel::filePath( index );
+         QVariant old_value = change_external( 
+               path, 
+               value,
+               column,
+               &modified );
 
-         // get the external
-         T_SP_External external = get_external( index );
-
-         if( !external )
-            return false;
-
-
-         // create a backup for the undo stack
-         T_SP_External backup( new External( *external ) );
-
-         bool modified = false;
-
-         switch( index.column() - 4 )
-         {
-            case  0: 
-               {
-                  if( external->local_path != value )
-                  {
-                     external->local_path = value;
-                     modified = true;
-                     break;
-                  }
-               }
-            case  1: 
-               {
-                  if( external->url != value )
-                  {
-                     external->url = value;
-                     modified = true;
-                     break;
-                  }
-               }
-            case  2: 
-               {
-                  if( external->peg_revision != value )
-                  {
-                     external->peg_revision = value;
-                     modified = true;
-                     break;
-                  }
-               }
-            case  3: 
-               {
-                  if( external->operative_revision != value )
-                  {
-                     external->operative_revision = value;
-                     modified = true;
-                     break;
-                  }
-               }
-            case  4: 
-               {
-                  if( external->storage_path != value )
-                  {
-                     external->storage_path = value;
-                     modified = true;
-                     break;
-                  }
-               }
-            default: return false;
-         }
 
          if( modified )
          {
-            external->modified = true;
-            undo_stack.push( new External_Command( 
-                     &external_map, 
-                     QFileSystemModel::filePath( index ),
-                     backup ) );
+            undo_stack.push( new External_Command(
+                     this,
+                     path,
+                     column,
+                     value,
+                     old_value ) );
          }
 
          return true;

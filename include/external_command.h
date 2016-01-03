@@ -22,7 +22,9 @@
 #define _SVN_EXTERNALS_DISPOSER_EXTERNAL_COMMAND_H
 #include <QUndoCommand>
 #include <QTextStream>
+#include <QModelIndex>
 
+#include "data_model.h"
 #include "external.h"
 
 
@@ -38,16 +40,13 @@ class External_Command : public QObject, public QUndoCommand
    Q_OBJECT
 public:
 
-#if 0 // not used at the moment
-
-   enum External_Command_Id { Id = 1234 };
-#endif
-
    /// @brief Ctor: not implemented!
-   explicit External_Command(
-         QHash< QString, T_SP_External > * external_map,
-         const QString       & path,
-         const T_SP_External & old_external, 
+   External_Command(
+         Data_Model *         data_model,
+         const QString      & path,
+         int                  index,
+         const QVariant     & new_value,
+         const QVariant     & old_value,
          QUndoCommand *parent = nullptr );
 
 
@@ -57,16 +56,6 @@ public:
    /// @brief  Inserts new_external into the external map
    virtual void redo() Q_DECL_OVERRIDE;
 
-#if 0  // we use the default behaviour which we disables merging
-       // http://doc.qt.io/qt-5.5/qundocommand.html#mergeWith
-
-   /// @brief  Overrides new_external 
-   //          with the external provided by cmd->external_map.value( path )
-   virtual bool mergeWith(const QUndoCommand *cmd ) Q_DECL_OVERRIDE;
-
-   /// @brief  
-   virtual int id() const Q_DECL_OVERRIDE;
-#endif 
 
    /// @brief  Copy ctor: not implemented!
    External_Command(const External_Command & a_template_) = delete;
@@ -93,17 +82,22 @@ public:
 
 private:
 
-   /// @brief  Pointer to the external_map, used by Data_Model
-   QHash< QString, T_SP_External > * external_map;
+   /// @brief The data-model, which holds/manages the externals
+   Data_Model *         data_model;
 
-   /// @brief  Path of the external (used as key of external_map)
-   QString       path;
+   QString              path;
 
-   /// @brief  The new external (after changing the content)
-   T_SP_External new_external;
+   /// @brief The index, which is chagned
+   int                  index;
 
-   /// @brief  The old external (before changing the content)
-   T_SP_External old_external;
+   /// @brief The new value
+   const QVariant       new_value;
+
+   /// @brief The old value
+   const QVariant       old_value;
+
+   /// @brief Flag to discard first redo call
+   bool                 called_once;
 
 }; // class External_Command
 
