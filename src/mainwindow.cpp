@@ -38,10 +38,16 @@ Main_Window::Main_Window( QWidget *parent  )
 {
    ui.setupUi(this);
 
+
+   externals_TV = new Tree_View( this );
+   QVBoxLayout *layout = new QVBoxLayout;
+   layout->addWidget( externals_TV );
+   ui.externals_W->setLayout(layout);
+
    // this loads also working_cp_path
    load_settings( );
 
-   ui.externals_TV->show();
+   externals_TV->show();
 
    setWindowTitle( APP_NAME + " v" + APP_VERSION );
 }
@@ -55,7 +61,7 @@ Main_Window::~Main_Window( )
 
 void Main_Window::del_external_model( void )
 {
-   ui.externals_TV->setModel( nullptr );
+   externals_TV->setModel( nullptr );
 
    if( data_model != nullptr )
    {
@@ -75,19 +81,19 @@ void Main_Window::load_settings( void )
 void Main_Window::save_column_settings( void )
 {
    QSettings settings;
-   settings.setValue( SET_COLUMN_W1, ui.externals_TV->columnWidth(0) );
-   settings.setValue( SET_COLUMN_W2, ui.externals_TV->columnWidth(1) );
-   settings.setValue( SET_COLUMN_W3, ui.externals_TV->columnWidth(2) );
-   settings.setValue( SET_COLUMN_W4, ui.externals_TV->columnWidth(3) );
+   settings.setValue( SET_COLUMN_W1, externals_TV->columnWidth(0) );
+   settings.setValue( SET_COLUMN_W2, externals_TV->columnWidth(1) );
+   settings.setValue( SET_COLUMN_W3, externals_TV->columnWidth(2) );
+   settings.setValue( SET_COLUMN_W4, externals_TV->columnWidth(3) );
 }
 
 void Main_Window::load_column_settings( void )
 {
    QSettings settings;
-   ui.externals_TV->setColumnWidth( 0, settings.value( SET_COLUMN_W1, 100 ).toInt() );
-   ui.externals_TV->setColumnWidth( 1, settings.value( SET_COLUMN_W2, 100 ).toInt() );
-   ui.externals_TV->setColumnWidth( 2, settings.value( SET_COLUMN_W3, 100 ).toInt() );
-   ui.externals_TV->setColumnWidth( 3, settings.value( SET_COLUMN_W4, 100 ).toInt() );
+   externals_TV->setColumnWidth( 0, settings.value( SET_COLUMN_W1, 100 ).toInt() );
+   externals_TV->setColumnWidth( 1, settings.value( SET_COLUMN_W2, 100 ).toInt() );
+   externals_TV->setColumnWidth( 2, settings.value( SET_COLUMN_W3, 100 ).toInt() );
+   externals_TV->setColumnWidth( 3, settings.value( SET_COLUMN_W4, 100 ).toInt() );
 }
 
 void Main_Window::save_settings( void )
@@ -117,8 +123,8 @@ void Main_Window::update_tree( void )
    {
       data_model = new Data_Model( );
       data_model->setRootPath( working_cp_path );
-      ui.externals_TV->setModel( data_model );
-      ui.externals_TV->setRootIndex( data_model->index( working_cp_path ) );
+      externals_TV->setModel( data_model );
+      externals_TV->setRootIndex( data_model->index( working_cp_path ) );
 
       undo_action = data_model->create_undo_action( this, tr("&Undo" ) );
       undo_action->setShortcuts(QKeySequence::Undo);
@@ -156,13 +162,13 @@ void Main_Window::on_expand_PB_clicked( void )
    if( expanded == true )
    {
       expanded = false;
-      ui.externals_TV->collapseAll(); 
+      externals_TV->collapseAll(); 
       ui.expand_PB->setText( tr("Expand all") );
    }
    else
    {
       expanded = true;
-      ui.externals_TV->expandAll(); 
+      externals_TV->expandAll(); 
       ui.expand_PB->setText( tr("Collapse all") );
    }
 }

@@ -25,7 +25,7 @@
 #include <QMap>
 #include <QDebug>
 
-
+#include "tree_view.h"
 #include "ui_MainWindow.h"
 #include "data_model.h"
 
@@ -117,6 +117,10 @@ private:
    /// @author feddischson
    /// @brief
    QAction * redo_action;
+
+   /// @author feddischson
+   /// @brief
+   Tree_View * externals_TV;
 
 private slots:
 
