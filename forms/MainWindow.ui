@@ -94,6 +94,12 @@
      <height>19</height>
     </rect>
    </property>
+   <widget class="QMenu" name="edit_M">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+   </widget>
+   <addaction name="edit_M"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

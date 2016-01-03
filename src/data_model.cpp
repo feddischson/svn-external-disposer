@@ -25,16 +25,19 @@
 #include <QProcess>
 #include <QDomDocument>
 #include <QBrush>
+
 #include "const.h"
 #include "data_model.h"
+#include "external_command.h"
 
 namespace SVN_EXTERNALS_DISPOSER
 {
 
 
 Data_Model::Data_Model( QObject *parent )
-   : QFileSystemModel( parent ),
-   root_path( "" )
+   : QFileSystemModel( parent ), 
+     root_path( "" ),
+     undo_stack( this )
 {
    header  << GUI_HEAD_TARGET
            << GUI_HEAD_EXTERNAL  
@@ -43,22 +46,23 @@ Data_Model::Data_Model( QObject *parent )
            << GUI_HEAD_PATH;
 }
 
+QAction * Data_Model::create_undo_action(QObject * parent, const QString & prefix ) const
+{
+   return undo_stack.createUndoAction( parent, prefix );
+}
+
+QAction * Data_Model::create_redo_action(QObject * parent, const QString & prefix ) const
+{
+   return undo_stack.createRedoAction( parent, prefix );
+}
+
+
 T_SP_External Data_Model::get_external( const QModelIndex & index ) const
 {
    QString path = QFileSystemModel::filePath( index );
    return external_map.value( path );
 }
 
-
-void backup_externals( void )
-{
-
-}
-
-void restore_externals( void )
-{
-
-}
 
 QVariant Data_Model::data(const QModelIndex &index, int role) const 
 {
@@ -118,9 +122,17 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
       if( role == Qt::EditRole )
       {
 
+         // get the external
          T_SP_External external = get_external( index );
+
          if( !external )
             return false;
+
+
+         // create a backup for the undo stack
+         T_SP_External backup( new External( *external ) );
+
+         bool modified = false;
 
          switch( index.column() - 4 )
          {
@@ -129,7 +141,7 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
                   if( external->local_path != value )
                   {
                      external->local_path = value;
-                     external->modified = true;
+                     modified = true;
                      break;
                   }
                }
@@ -138,7 +150,7 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
                   if( external->url != value )
                   {
                      external->url = value;
-                     external->modified = true; 
+                     modified = true;
                      break;
                   }
                }
@@ -147,7 +159,7 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
                   if( external->peg_revision != value )
                   {
                      external->peg_revision = value;
-                     external->modified = true; 
+                     modified = true;
                      break;
                   }
                }
@@ -156,7 +168,7 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
                   if( external->operative_revision != value )
                   {
                      external->operative_revision = value;
-                     external->modified = true; 
+                     modified = true;
                      break;
                   }
                }
@@ -165,12 +177,22 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
                   if( external->storage_path != value )
                   {
                      external->storage_path = value;
-                     external->modified = true; 
+                     modified = true;
                      break;
                   }
                }
             default: return false;
          }
+
+         if( modified )
+         {
+            external->modified = true;
+            undo_stack.push( new External_Command( 
+                     &external_map, 
+                     QFileSystemModel::filePath( index ),
+                     backup ) );
+         }
+
          return true;
       }
       else

@@ -23,6 +23,7 @@
 #include <iostream>
 #include <QWidget>
 #include <QMap>
+#include <QDebug>
 
 
 #include "ui_MainWindow.h"
@@ -109,6 +110,13 @@ private:
    /// @brief
    bool expanded;
 
+   /// @author feddischson
+   /// @brief
+   QAction * undo_action;
+
+   /// @author feddischson
+   /// @brief
+   QAction * redo_action;
 
 private slots:
 
@@ -137,6 +145,8 @@ private slots:
    /// @brief
    void on_reset_PB_clicked( void );
 
+
+   void data_changed( void );
 
 }; // class Main_Window
 

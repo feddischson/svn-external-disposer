@@ -19,10 +19,12 @@ HEADERS     += include/const.h
 HEADERS     += include/mainwindow.h
 HEADERS     += include/data_model.h
 HEADERS     += include/external.h
+HEADERS     += include/external_command.h
 SOURCES     += src/main.cpp
 SOURCES     += src/mainwindow.cpp
 SOURCES     += src/data_model.cpp
 SOURCES     += src/external.cpp
+SOURCES     += src/external_command.cpp
 
 VERSION = "0.1.0"
 DEFINES += _APP_VERSION=\\\"$$VERSION\\\"

@@ -25,6 +25,7 @@
 #include <QFileSystemModel>
 #include <QHash>
 #include <QRegExp>
+#include <QUndoStack>
 
 #include "external.h"
 
@@ -102,6 +103,11 @@ public:
    /// @brief  Saves the modified externals
    bool save_externals( void );
 
+
+   QAction * create_undo_action(QObject * parent, const QString & prefix = QString()) const;
+
+   QAction * create_redo_action(QObject * parent, const QString & prefix = QString()) const;
+
 private:
 
    /// @broef Creates a backup of the external information
@@ -157,6 +163,9 @@ private:
 
    /// @brief The root path which points to a local SVN working copy
    QString root_path;
+
+   /// @brief An undo stack to support undo/redo.
+   QUndoStack undo_stack;
 
 }; // class Data_Model
 

@@ -119,6 +119,16 @@ void Main_Window::update_tree( void )
       data_model->setRootPath( working_cp_path );
       ui.externals_TV->setModel( data_model );
       ui.externals_TV->setRootIndex( data_model->index( working_cp_path ) );
+
+      undo_action = data_model->create_undo_action( this, tr("&Undo" ) );
+      undo_action->setShortcuts(QKeySequence::Undo);
+      redo_action = data_model->create_redo_action( this, tr("&Redo" ) );
+      redo_action->setShortcuts(QKeySequence::Redo);
+
+      connect( undo_action, SIGNAL( triggered()), this, SLOT( data_changed()));
+      connect( redo_action, SIGNAL( triggered()), this, SLOT( data_changed()));
+      ui.edit_M->addAction( undo_action );
+      ui.edit_M->addAction( redo_action );
       load_column_settings();
    }
 
@@ -173,6 +183,20 @@ void Main_Window::on_save_PB_clicked( void )
    update_tree();
 }
 
+void Main_Window::data_changed( void )
+{
+   // TODO we need this to refresh 
+   //      the treeview. This is not nice
+   //      and a better solution is necessary
+   if( data_model != nullptr )
+   {
+      QSize s1 = size();
+      QSize s2 = s1;
+      s2.setWidth( s2.width()+1);
+      this->resize( s2 );
+      this->resize( s1 );
+   }
+}
 
 Main_Window::operator QString()
 {
