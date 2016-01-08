@@ -97,7 +97,6 @@ private:
    /// @brief
    void load_column_settings( void );
 
-
    /// @author feddischson
    /// @brief
    void save_settings( void );
@@ -105,6 +104,10 @@ private:
    /// @author feddischson
    /// @brief
    void save_column_settings( void );
+
+   /// @author feddischson
+   /// @brief
+   void setup_actions( void );
 
    /// @author feddischson
    /// @brief
@@ -117,6 +120,26 @@ private:
    /// @author feddischson
    /// @brief
    QAction * redo_action;
+
+   /// @author feddischson
+   /// @brief
+   QAction * reload_action;
+
+   /// @author feddischson
+   /// @brief
+   QAction * discard_action;
+
+   /// @author feddischson
+   /// @brief
+   QAction * quit_action;
+
+   /// @author feddischson
+   /// @brief
+   QAction * open_action;
+
+   /// @author feddischson
+   /// @brief
+   QAction * save_action;
 
    /// @author feddischson
    /// @brief
@@ -144,10 +167,13 @@ private slots:
    /// @brief
    void on_expand_PB_clicked( void );
 
+   /// @author feddischson
+   /// @brief
+   void on_reload_PB_clicked( void );
 
    /// @author feddischson
    /// @brief
-   void on_reset_PB_clicked( void );
+   void on_discard_PB_clicked( void );
 
 }; // class Main_Window
 

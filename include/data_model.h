@@ -112,6 +112,9 @@ public:
    QAction * create_redo_action(QObject * parent, const QString & prefix = QString()) const;
 
 
+   /// @brief  Restores the backuped data.
+   void restore( void );
+
 private:
 
 
@@ -133,6 +136,13 @@ private:
       QVariant new_value,
       int index,
       bool * modified );
+
+
+   void transfer( 
+      QMultiMap< QString, T_SP_External > * from_property_map,
+      QHash< QString, T_SP_External >     * to_external_map,
+      QMultiMap< QString, T_SP_External > * to_property_map );
+
 
 
    /// @brief Creates a backup of the external information

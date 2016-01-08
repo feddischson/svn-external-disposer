@@ -447,6 +447,43 @@ QModelIndex Data_Model::setRootPath( const QString & new_path )
 }
 
 
+void Data_Model::transfer( 
+   QMultiMap< QString, T_SP_External > * from_property_map,
+   QHash< QString, T_SP_External >     * to_external_map,
+   QMultiMap< QString, T_SP_External > * to_property_map )
+{
+   to_external_map->clear();
+   to_property_map->clear();
+   auto i = from_property_map->constBegin();
+   while( i != from_property_map->constEnd() )
+   {
+      // create a copy of the external (via copy-ctor)
+      T_SP_External backup( new External( *i.value( ) ) );
+
+      QString abs_path = QDir( i.key() ).filePath( backup->local_path.toString() );
+
+      // insert the backup into our back-storages
+      to_external_map->insert( abs_path, backup);
+      to_property_map->insert( i.key(), backup );
+      i++;
+   }
+}
+
+
+void Data_Model::restore( void )
+{
+   transfer( &property_map_backup, 
+             &external_map,
+             &property_map );
+
+   // clear the undo stack
+   // TODO: this is not nice, but required to have consistent data
+   undo_stack.clear();
+   emit( layoutChanged() );
+
+}
+
+
 void Data_Model::backup( void )
 {
    external_map_backup.clear();

@@ -47,21 +47,28 @@
       <item>
        <widget class="QPushButton" name="expand_PB">
         <property name="text">
-         <string>Expand All</string>
+         <string>&amp;Expand All</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="reset_PB">
+       <widget class="QPushButton" name="reload_PB">
         <property name="text">
-         <string>Reset</string>
+         <string>&amp;Reload</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="discard_PB">
+        <property name="text">
+         <string>&amp;Discard</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="save_PB">
         <property name="text">
-         <string>Save</string>
+         <string>&amp;Save</string>
         </property>
        </widget>
       </item>
@@ -96,9 +103,15 @@
    </property>
    <widget class="QMenu" name="edit_M">
     <property name="title">
-     <string>Edit</string>
+     <string>&amp;Edit</string>
     </property>
    </widget>
+   <widget class="QMenu" name="file_M">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+   </widget>
+   <addaction name="file_M"/>
    <addaction name="edit_M"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

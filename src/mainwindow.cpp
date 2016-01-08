@@ -43,6 +43,7 @@ Main_Window::Main_Window( QWidget *parent  )
    QVBoxLayout *layout = new QVBoxLayout;
    layout->addWidget( externals_TV );
    ui.externals_W->setLayout(layout);
+   setup_actions( );
 
    // this loads also working_cp_path
    load_settings( );
@@ -108,6 +109,27 @@ void Main_Window::save_settings( void )
 }
 
 
+void Main_Window::setup_actions( void )
+{
+   quit_action    = new QAction(tr( "&Quit" ),                    this);
+   open_action    = new QAction(tr( "&Open SVN Working Copy" ),   this);
+   reload_action  = new QAction(tr( "&Reload"),                   this);
+   discard_action = new QAction(tr( "&Discard"),                  this);
+   save_action    = new QAction(tr( "&Save"),                     this);
+
+   connect( quit_action,      SIGNAL(triggered()), qApp, SLOT(quit()));
+   connect( open_action,      SIGNAL(triggered()), this, SLOT(on_working_copy_browse_PB_clicked()));
+   connect( reload_action,    SIGNAL(triggered()), this, SLOT(on_reload_PB_clicked()));
+   connect( discard_action,   SIGNAL(triggered()), this, SLOT(on_discard_PB_clicked()));
+   connect( save_action,      SIGNAL(triggered()), this, SLOT(on_save_PB_clicked()));
+
+   ui.file_M->addAction( open_action );
+   ui.file_M->addAction( reload_action  );
+   ui.file_M->addAction( discard_action );
+   ui.file_M->addAction( save_action );
+   ui.file_M->addAction( quit_action );
+}
+
 
 void Main_Window::update_tree( void )
 {
@@ -131,8 +153,9 @@ void Main_Window::update_tree( void )
       redo_action = data_model->create_redo_action( this, tr("&Redo" ) );
       redo_action->setShortcuts(QKeySequence::Redo);
 
-      ui.edit_M->addAction( undo_action );
-      ui.edit_M->addAction( redo_action );
+      ui.edit_M->clear();
+      ui.edit_M->addAction( undo_action    );
+      ui.edit_M->addAction( redo_action    );
       load_column_settings();
    }
 
@@ -172,7 +195,7 @@ void Main_Window::on_expand_PB_clicked( void )
 }
 
 
-void Main_Window::on_reset_PB_clicked( void )
+void Main_Window::on_reload_PB_clicked( void )
 {
    save_settings();
    update_tree();
@@ -185,6 +208,14 @@ void Main_Window::on_save_PB_clicked( void )
       data_model->save_externals( );
    save_settings();
    update_tree();
+}
+
+
+void Main_Window::on_discard_PB_clicked( void )
+{
+   if( data_model != nullptr )
+      data_model->restore( );
+   save_settings();
 }
 
 
