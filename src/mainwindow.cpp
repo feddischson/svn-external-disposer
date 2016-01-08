@@ -71,6 +71,11 @@ void Main_Window::del_external_model( void )
    }
 }
 
+/// @details
+/// The function does the following:
+///   - Load the working copy path setting
+///   - Call update_tree(), which initializes the model
+//      and calls load_column_settings().
 void Main_Window::load_settings( void )
 {
    QSettings settings;
@@ -78,6 +83,7 @@ void Main_Window::load_settings( void )
    ui.working_copy_path_LE->setText( working_cp_path );
    update_tree();
 }
+
 
 void Main_Window::save_column_settings( void )
 {
@@ -97,6 +103,8 @@ void Main_Window::load_column_settings( void )
    externals_TV->setColumnWidth( 3, settings.value( SET_COLUMN_W4, 100 ).toInt() );
 }
 
+/// @details
+/// This function saves the path and calls save_column_settings().
 void Main_Window::save_settings( void )
 {
    QSettings settings;

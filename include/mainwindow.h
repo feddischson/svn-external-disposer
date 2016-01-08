@@ -33,146 +33,119 @@ namespace SVN_EXTERNALS_DISPOSER
 {
 
 
-/// @author feddischson
 /// @brief The mainwindow class
+///
+/// @author feddischson
 class Main_Window : public QMainWindow
 {
 
    Q_OBJECT
 public:
 
-   /// @author feddischson
    /// @brief Ctor: not implemented!
    explicit Main_Window( QWidget *parent = nullptr );
 
 
-   /// @author feddischson
    /// @brief  Copy ctor: not implemented!
    Main_Window(const Main_Window & a_window) = delete;
 
 
-   /// @author feddischson
    /// @brief  Assignment operator: not implemented!
    Main_Window& operator= (const Main_Window & a_window) = delete;
 
 
-   /// @author feddischson
    /// @brief  Move constructor: not implemented!
    Main_Window( Main_Window && rhs ) = delete;
 
 
-   /// @author feddischson
    /// @brief  Move assignment operator: not implemented!
    Main_Window& operator=( Main_Window && rhs ) = delete;
 
 
-   /// @author feddischson
    /// @brief Dtor, does only saving the settings.
    ~Main_Window();
 
-   /// @author feddischson
    /// @brief QString operator, to print data to qDebug()
    virtual operator QString();
 
 private:
 
 
-   // the external model reflecting our tree of data
+   // the external model reflecting our tree of data.
    Data_Model *data_model;
 
 
-   /// @author feddischson
-   /// @brief
+   /// @brief UI instance, created from forms/MainWindow.ui.
    Ui::Main_Window ui;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief The current working copy path.
    QString working_cp_path;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Loads the settings.
    void load_settings( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Loads the column settings (the width of four columns).
    void load_column_settings( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Saves the settings (including the column settings).
    void save_settings( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Saves the column settings.
    void save_column_settings( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Initializes most of the actions (except the edit settings).
    void setup_actions( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Expanded state.
    bool expanded;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Pointer to undo action instance (created by Data_Model).
    QAction * undo_action;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Pointer to redo action instance (created by Data_Model).
    QAction * redo_action;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Pointer to reload action instance.
    QAction * reload_action;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Pointer to discrad action instance.
    QAction * discard_action;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Pointer to quit action instance.
    QAction * quit_action;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Pointer to open action instance.
    QAction * open_action;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Pointer to save action instance.
    QAction * save_action;
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Pointer to the tree-view instance.
    Tree_View * externals_TV;
 
 private slots:
 
+   /// @brief De-initializes externals_TV and delets it.
    void del_external_model( void );
 
 
-   /// @author feddischson
    /// @brief  Creates a new Data_Model
    ///         and sets this instance to ui.working_copy_path_LE
    void update_tree( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief  Handler slot for the working_copy_browse_PB button.
    void on_working_copy_browse_PB_clicked( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief  Handler slot for the save_PB button.
    void on_save_PB_clicked( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Handler slot for the expand_PB button.
    void on_expand_PB_clicked( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Handler slot for the reload_PB button.
    void on_reload_PB_clicked( void );
 
-   /// @author feddischson
-   /// @brief
+   /// @brief Handler slot for the discard_PB button.
    void on_discard_PB_clicked( void );
 
 }; // class Main_Window
