@@ -23,7 +23,9 @@
 #include <QObject>
 #include <QTextStream>
 #include <QDialog>
+#include <QProcess>
 
+#include "const.h"
 #include "ui_LogDialog.h"
 
 namespace SVN_EXTERNALS_DISPOSER
@@ -39,7 +41,9 @@ class Log_Dialog : public QDialog
 public:
 
    /// @brief Ctor: not implemented!
-   explicit Log_Dialog( QWidget *parent = nullptr );
+   explicit Log_Dialog( 
+         const QString & working_cp_path, 
+         QWidget *parent = nullptr );
 
 
    /// @brief  Copy ctor: not implemented!
@@ -65,16 +69,71 @@ public:
    /// @brief QSTring operator, to print data to qDebug()
    virtual operator QString();
 
+   // @brief Returns the selected revision.
+   QVariant get_revision( void );
+
 private:
+
+   /// @brief Runs `svn log --xml .... `, extracts the XML result and
+   //         adds SVN_Log entries into log_list.
+   /// 
+   bool load_svn_log(
+         quint64 from = std::numeric_limits< quint64 >::max(),
+         quint64 n = 10 );
+
+
+   /// @brief Checks if there are new entries in the log-list.
+   ///         If there are new entries, they are added to the table widget.
+   ///
+   void update_table( void );
+
+
+   /// @brief Log entry containing all necessary elements of a log entry.
+   /// @details
+   ///      This includes
+   ///         - Revision
+   ///         - Author
+   ///         - Commit Message
+   ///         - Date
+   struct SVN_Log
+   {
+      SVN_Log( 
+            const QString revision, 
+            const QString & author,
+            const QString & message,
+            const QString & date ) :
+         rev( revision.toULong() ),
+         revision( revision ),
+         author( author ),
+         message( message ),
+         date( date )
+      {}
+      quint64 rev;
+      QString revision;
+      QString author;
+      QString message;
+      QString date;
+      operator QString()
+      {
+         return author + ";" + date + ";" + revision + ";" + message;
+      }
+   };
+
+   /// @brief Internal storage to store the `svn log --xml .... ` result.
+   QList< SVN_Log > log_list;
+
+   /// @brief The path where `svn log --xml ...` is executed.
+   QString working_cp_path;
 
    /// @brief UI instance, created from forms/LogDialog.ui.
    Ui::Dialog ui;
 
-
+   /// @brief Falg to remember, if there was already once selected a row.
+   bool was_selected;
 
 private slots:
 
-   /// @brief
+   /// @brief Handler for the More push button.
    void on_load_more_PB_clicked( void );
 
 

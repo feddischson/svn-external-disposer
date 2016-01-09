@@ -115,6 +115,9 @@ public:
    /// @brief  Restores the backuped data.
    void restore( void );
 
+
+   /// @brief Returns true if the index is an external entry.
+   bool is_external( const QModelIndex & i );
 private:
 
 

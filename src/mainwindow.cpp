@@ -244,17 +244,29 @@ void Main_Window::on_discard_PB_clicked( void )
 
 void Main_Window::open_context_menu(const QPoint &point)
 {
-//    QModelIndex index = externals_TV->indexAt(point);
-//    if (index.isValid() && index.row() % 2 == 0) {
-    context_menu->exec( externals_TV->mapToGlobal(point));
-//    }    
+   QModelIndex index = externals_TV->indexAt(point);
+   if(   index.isValid() 
+      && ( index.column() == 6 || index.column() == 7 ) 
+      && data_model->is_external( index )
+      )
+   {
+      last_context_index = index;
+      context_menu->exec( externals_TV->mapToGlobal(point));
+   }    
 }
 
 void Main_Window::browse_rev( void )
 {
-   qDebug() << "browse rev";
-   Log_Dialog *d = new Log_Dialog( this );
-   d->show();
+   if( data_model != nullptr )
+   {
+      QString path = data_model->filePath( last_context_index );
+      Log_Dialog *d = new Log_Dialog( path, this );
+      d->exec();
+      if( d->result() )
+      {
+         data_model->setData( last_context_index, d->get_revision(), Qt::EditRole  );
+      }
+   }
 }
 
 

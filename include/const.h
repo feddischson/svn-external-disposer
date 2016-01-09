@@ -41,6 +41,12 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString XML_NAME_TARGET   = "target"; 
    static const QString XML_NAME_PROPERTY = "property";
    static const QString XML_NAME_PATH     = "path";
+   static const QString XML_NAME_LOG      = "log";
+   static const QString XML_NAME_LOGENTRY = "logentry";
+   static const QString XML_NAME_MSG      = "msg";
+   static const QString XML_NAME_REVISION = "revision";
+   static const QString XML_NAME_DATE     = "date";
+   static const QString XML_NAME_AUTHOR   = "author";
    /// @}
 
    /// @defgroup svn_const  SVN string constants
@@ -56,6 +62,9 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString SVN_DEPTH         = "--depth";
    static const QString SVN_FILES         = "files";
    static const QString SVN_EXTERNAL_SEP  = "\n";
+   static const QString SVN_LOG           = "log";
+   static const QString SVN_LIMIT         = "-l";
+   static const QString SVN_ALL_REVPROPS  = "--with-all-revprops";
    /// @}
 
    /// @defgroup sys_const  System constants
@@ -85,6 +94,10 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString GUI_HEAD_PEG          = QObject::tr( "Peg Revision"       );
    static const QString GUI_HEAD_OPERATIVE    = QObject::tr( "Operative Revision" );
    static const QString GUI_HEAD_PATH         = QObject::tr( "Defined at"         );
+   static const QString GUI_HEAD_REVISION     = QObject::tr( "Revision"           );
+   static const QString GUI_HEAD_AUTHOR       = QObject::tr( "Author"             );
+   static const QString GUI_HEAD_MESSAGE      = QObject::tr( "Message"            );
+   static const QString GUI_HEAD_DATE         = QObject::tr( "Date"               );
    /// @}
 
    static const QColor COL_MODIFIED          = Qt::yellow;

@@ -480,7 +480,15 @@ void Data_Model::restore( void )
    // TODO: this is not nice, but required to have consistent data
    undo_stack.clear();
    emit( layoutChanged() );
+}
 
+bool Data_Model::is_external( const QModelIndex & i )
+{
+   QString path = QFileSystemModel::filePath( i );
+   if( external_map.contains( path ) )
+      return true;
+   else
+      return false;
 }
 
 

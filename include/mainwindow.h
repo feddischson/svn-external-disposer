@@ -129,6 +129,10 @@ private:
    /// @brief Pointer to revision-browse action.
    QAction * browse_rev_action;
 
+
+   /// @brief The last index, where the context of the tree-view is opened.
+   QModelIndex last_context_index;
+
 private slots:
 
    /// @brief De-initializes externals_TV and delets it.
