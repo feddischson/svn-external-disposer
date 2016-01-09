@@ -123,6 +123,12 @@ private:
    /// @brief Pointer to the tree-view instance.
    Tree_View * externals_TV;
 
+   /// @brief Pointer to the context menu used for the treeview.
+   QMenu   * context_menu;
+
+   /// @brief Pointer to revision-browse action.
+   QAction * browse_rev_action;
+
 private slots:
 
    /// @brief De-initializes externals_TV and delets it.
@@ -147,6 +153,11 @@ private slots:
 
    /// @brief Handler slot for the discard_PB button.
    void on_discard_PB_clicked( void );
+
+   void browse_rev( void );
+
+   /// @brief
+   void open_context_menu(const QPoint &point);
 
 }; // class Main_Window
 

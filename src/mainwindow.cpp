@@ -26,6 +26,7 @@
 #include <QProcess>
 
 #include "mainwindow.h"
+#include "log_dialog.h"
 
 namespace SVN_EXTERNALS_DISPOSER
 {
@@ -40,6 +41,8 @@ Main_Window::Main_Window( QWidget *parent  )
 
 
    externals_TV = new Tree_View( this );
+   externals_TV->setContextMenuPolicy(Qt::CustomContextMenu);
+
    QVBoxLayout *layout = new QVBoxLayout;
    layout->addWidget( externals_TV );
    ui.externals_W->setLayout(layout);
@@ -119,23 +122,35 @@ void Main_Window::save_settings( void )
 
 void Main_Window::setup_actions( void )
 {
-   quit_action    = new QAction(tr( "&Quit" ),                    this);
-   open_action    = new QAction(tr( "&Open SVN Working Copy" ),   this);
-   reload_action  = new QAction(tr( "&Reload"),                   this);
-   discard_action = new QAction(tr( "&Discard"),                  this);
-   save_action    = new QAction(tr( "&Save"),                     this);
+   context_menu      = new QMenu( this->externals_TV );
 
-   connect( quit_action,      SIGNAL(triggered()), qApp, SLOT(quit()));
-   connect( open_action,      SIGNAL(triggered()), this, SLOT(on_working_copy_browse_PB_clicked()));
-   connect( reload_action,    SIGNAL(triggered()), this, SLOT(on_reload_PB_clicked()));
-   connect( discard_action,   SIGNAL(triggered()), this, SLOT(on_discard_PB_clicked()));
-   connect( save_action,      SIGNAL(triggered()), this, SLOT(on_save_PB_clicked()));
+   quit_action       = new QAction(tr( "&Quit" ),                    this);
+   open_action       = new QAction(tr( "&Open SVN Working Copy" ),   this);
+   reload_action     = new QAction(tr( "&Reload"),                   this);
+   discard_action    = new QAction(tr( "&Discard"),                  this);
+   save_action       = new QAction(tr( "&Save"),                     this);
+
+   browse_rev_action = new QAction(tr( "&Browse"),                   this);
+
+
+
+
+   connect( quit_action,       SIGNAL(triggered()), qApp, SLOT(quit()));
+   connect( open_action,       SIGNAL(triggered()), this, SLOT(on_working_copy_browse_PB_clicked()));
+   connect( reload_action,     SIGNAL(triggered()), this, SLOT(on_reload_PB_clicked()));
+   connect( discard_action,    SIGNAL(triggered()), this, SLOT(on_discard_PB_clicked()));
+   connect( save_action,       SIGNAL(triggered()), this, SLOT(on_save_PB_clicked()));
+   connect( browse_rev_action, SIGNAL(triggered()), this, SLOT(browse_rev()));
+
+   connect( externals_TV, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(open_context_menu(const QPoint &)));
 
    ui.file_M->addAction( open_action );
    ui.file_M->addAction( reload_action  );
    ui.file_M->addAction( discard_action );
    ui.file_M->addAction( save_action );
    ui.file_M->addAction( quit_action );
+
+   context_menu->addAction( browse_rev_action );
 }
 
 
@@ -225,6 +240,23 @@ void Main_Window::on_discard_PB_clicked( void )
       data_model->restore( );
    save_settings();
 }
+
+
+void Main_Window::open_context_menu(const QPoint &point)
+{
+//    QModelIndex index = externals_TV->indexAt(point);
+//    if (index.isValid() && index.row() % 2 == 0) {
+    context_menu->exec( externals_TV->mapToGlobal(point));
+//    }    
+}
+
+void Main_Window::browse_rev( void )
+{
+   qDebug() << "browse rev";
+   Log_Dialog *d = new Log_Dialog( this );
+   d->show();
+}
+
 
 
 Main_Window::operator QString()
