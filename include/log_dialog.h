@@ -72,6 +72,10 @@ public:
    // @brief Returns the selected revision.
    QVariant get_revision( void );
 
+
+   // @brief loads the initial log via `load_svn_log`.
+   bool load( void );
+
 private:
 
    /// @brief Runs `svn log --xml .... `, extracts the XML result and

@@ -23,6 +23,7 @@ HEADERS     += include/external.h
 HEADERS     += include/tree_view.h
 HEADERS     += include/external_command.h
 HEADERS     += include/log_dialog.h
+HEADERS     += include/login_dialog.h
 SOURCES     += src/main.cpp
 SOURCES     += src/mainwindow.cpp
 SOURCES     += src/data_model.cpp
@@ -30,6 +31,7 @@ SOURCES     += src/external.cpp
 SOURCES     += src/tree_view.cpp
 SOURCES     += src/external_command.cpp
 SOURCES     += src/log_dialog.cpp
+SOURCES     += src/login_dialog.cpp
 
 VERSION = "0.1.0"
 DEFINES += _APP_VERSION=\\\"$$VERSION\\\"

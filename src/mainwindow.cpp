@@ -261,11 +261,16 @@ void Main_Window::browse_rev( void )
    {
       QString path = data_model->filePath( last_context_index );
       Log_Dialog *d = new Log_Dialog( path, this );
-      d->exec();
-      if( d->result() )
+      if( d->load() )
       {
-         data_model->setData( last_context_index, d->get_revision(), Qt::EditRole  );
+         d->exec();
+         if( d->result() )
+         {
+            data_model->setData( last_context_index, d->get_revision(), Qt::EditRole  );
+         }
       }
+      else
+         qDebug() << "Load failed";
    }
 }
 

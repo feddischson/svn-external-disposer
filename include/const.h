@@ -65,7 +65,13 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString SVN_LOG           = "log";
    static const QString SVN_LIMIT         = "-l";
    static const QString SVN_ALL_REVPROPS  = "--with-all-revprops";
+   static const QString SVN_ERR_AUTH      = "E215004";
+   static const QString SVN_USER          = "--username";
+   static const QString SVN_PASS          = "--password";
    /// @}
+
+   /// @brief Number of authentication trials
+   static const int SVN_MAX_AUTH_TRIALS = 3;
 
    /// @defgroup sys_const  System constants
    /// 
@@ -84,6 +90,9 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString SET_COLUMN_W2     = "column_width2";
    static const QString SET_COLUMN_W3     = "column_width3";
    static const QString SET_COLUMN_W4     = "column_width4";
+   static const QString SET_USERNAMES     = "usernames";
+   static const QString SET_LASTNAME      = "lastname";
+   static const QString SET_USERNAME      = "username";
    /// @}
 
    /// @defgroup gui_const  GUI string constants

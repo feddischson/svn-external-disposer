@@ -23,6 +23,7 @@
 
 
 #include "log_dialog.h"
+#include "login_dialog.h"
 
 namespace SVN_EXTERNALS_DISPOSER
 {
@@ -47,13 +48,16 @@ Log_Dialog::Log_Dialog(
            << GUI_HEAD_DATE;
    ui.log_TW->setHorizontalHeaderLabels( headers );
 
-
-
-
    QHeaderView * view = ui.log_TW->horizontalHeader();
    view->setSectionResizeMode(QHeaderView::Stretch);
-   load_svn_log();
-   update_table();
+}
+
+bool Log_Dialog::load( void )
+{
+   bool result = load_svn_log( );
+   if( result )
+      update_table();
+   return result;
 }
 
 bool Log_Dialog::load_svn_log(
@@ -61,61 +65,111 @@ bool Log_Dialog::load_svn_log(
       quint64 n )
 {
    QProcess process;
+   int trials = SVN_MAX_AUTH_TRIALS;
 
    if( from == std::numeric_limits< quint64 >::max() )
    {
-      process.start( SVN_CMD, QStringList() 
-            << SVN_LOG 
-            << SVN_ALL_REVPROPS
-            << SVN_XML 
-            << SVN_LIMIT 
-            << QString::number( n ) 
-            << working_cp_path );
-      if( process.waitForFinished( SYS_PROCESS_TIMEOUT ) && 
-          process.exitCode() == 0 ) 
+
+      QStringList args;
+      QString stdout_result;
+
+      args << SVN_LOG 
+           << SVN_ALL_REVPROPS
+           << SVN_XML 
+           << SVN_LIMIT 
+           << QString::number( n ) 
+           << working_cp_path ;
+
+      //
+      // First, try it without password
+      //
+      process.start( SVN_CMD, args );
+      if( ! process.waitForFinished( SYS_PROCESS_TIMEOUT ) )
+         return false;
+
+      //
+      // If it fails and we need to authenticate, try it
+      //
+      if( process.exitCode() != 0 )
       {
-         QDomDocument doc;
-         QString content = process.readAllStandardOutput();
-         if ( !doc.setContent( content ) )
-            return false;
-         QDomNodeList logs  = doc.elementsByTagName( XML_NAME_LOG );
-
-         if( logs.size() != 1 )
+         QString error_msg = process.readAllStandardError();
+         if( !error_msg.contains( SVN_ERR_AUTH ) )
             return false;
 
-         QDomNodeList entries = logs.item(0).childNodes();
-         for( int i=0; i < entries.size(); i++ )
+
+         // try with authentication
+         while( trials-- )
          {
-            QDomNode entry = entries.item(i);
 
-            if( entry.hasAttributes() && 
-                entry.attributes().contains( XML_NAME_REVISION ) )
-            {
-               QString date   = "";
-               QString msg    = "";
-               QString author = "";
-               QDomElement e    = entry.toElement();
-               QString revision = e.attribute( XML_NAME_REVISION, "" );
+            QStringList args_tmp = args;
+            Login_Dialog *l = new Login_Dialog( this );
+            l->exec();
+            if( l->result() == QDialog::Rejected )
+               return false;
 
-               QDomNodeList content = entry.childNodes();
-               for( int j=0; j < content.size(); j++ )
-               {
-                  QString name = content.item( j ).nodeName();
-                  QString value  = content.item( j ).toElement().text();
-                  if( name == XML_NAME_DATE )
-                     date = value;
-                  else if( name == XML_NAME_MSG )
-                     msg = value;
-                  else if( name == XML_NAME_AUTHOR )
-                     author = value;
-               }
-               log_list.append( SVN_Log( revision, author, msg, date ) );
-            }
+            args_tmp 
+               << SVN_USER 
+               << l->username()
+               << SVN_PASS 
+               << l->password();
+            process.start( SVN_CMD, args_tmp );
+            if( ! process.waitForFinished( SYS_PROCESS_TIMEOUT ) )
+               return false;
+
+            if( process.exitCode() == 0 ) 
+               break;
          }
       }
-      else
+
+
+
+      // check if we have really a positive exit code
+      if( process.exitCode() != 0 )
          return false;
+
+
+      // read and parse the result
+      QDomDocument doc;
+      QString content = process.readAllStandardOutput();
+      if ( !doc.setContent( content ) )
+         return false;
+      QDomNodeList logs  = doc.elementsByTagName( XML_NAME_LOG );
+
+      if( logs.size() != 1 )
+         return false;
+
+      QDomNodeList entries = logs.item(0).childNodes();
+      for( int i=0; i < entries.size(); i++ )
+      {
+         QDomNode entry = entries.item(i);
+
+         if( entry.hasAttributes() && 
+             entry.attributes().contains( XML_NAME_REVISION ) )
+         {
+            QString date   = "";
+            QString msg    = "";
+            QString author = "";
+            QDomElement e    = entry.toElement();
+            QString revision = e.attribute( XML_NAME_REVISION, "" );
+
+            QDomNodeList content = entry.childNodes();
+            for( int j=0; j < content.size(); j++ )
+            {
+               QString name = content.item( j ).nodeName();
+               QString value  = content.item( j ).toElement().text();
+               if( name == XML_NAME_DATE )
+                  date = value;
+               else if( name == XML_NAME_MSG )
+                  msg = value;
+               else if( name == XML_NAME_AUTHOR )
+                  author = value;
+            }
+            log_list.append( SVN_Log( revision, author, msg, date ) );
+         }
+      }
+      return true;
    }
+   // @todo else case and 'load-more' stuff
 
    return true;
 }
