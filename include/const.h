@@ -86,13 +86,12 @@ namespace SVN_EXTERNALS_DISPOSER
    /// @{
    static const QString SET_FILE          = "/settings.ini";
    static const QString SET_CP_PATH       = "working_cp_path";
-   static const QString SET_COLUMN_W1     = "column_width1";
-   static const QString SET_COLUMN_W2     = "column_width2";
-   static const QString SET_COLUMN_W3     = "column_width3";
-   static const QString SET_COLUMN_W4     = "column_width4";
+   static const QString SET_COLUMN        = "column_width";
+   static const QString SET_COLUMN_W      = "column_width_val";
    static const QString SET_USERNAMES     = "usernames";
    static const QString SET_LASTNAME      = "lastname";
    static const QString SET_USERNAME      = "username";
+   static const QString SET_SELECT        = "select_state";
    /// @}
 
    /// @defgroup gui_const  GUI string constants

@@ -22,9 +22,10 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QDebug>
-#include <const.h>
 #include <QProcess>
+#include <QCheckBox>
 
+#include <const.h>
 #include "mainwindow.h"
 #include "log_dialog.h"
 
@@ -35,13 +36,21 @@ Main_Window::Main_Window( QWidget *parent  )
    : QMainWindow( parent ),
      data_model( nullptr ),
      working_cp_path( "" ),
-     expanded( false )
+     expanded( false ),
+     select_state( 0 )
 {
    ui.setupUi(this);
 
 
    externals_TV = new Tree_View( this );
    externals_TV->setContextMenuPolicy(Qt::CustomContextMenu);
+   externals_TV->header()->setContextMenuPolicy(Qt::CustomContextMenu);
+
+   connect( 
+         externals_TV->header(), 
+         SIGNAL( customContextMenuRequested( QPoint ) ),
+         this,
+         SLOT( open_header_menu( QPoint ) ) );
 
    QVBoxLayout *layout = new QVBoxLayout;
    layout->addWidget( externals_TV );
@@ -84,6 +93,7 @@ void Main_Window::load_settings( void )
    QSettings settings;
    working_cp_path = settings.value( SET_CP_PATH, "" ).toString();
    ui.working_copy_path_LE->setText( working_cp_path );
+   select_state = settings.value( SET_SELECT, 0 ).toInt();
    update_tree();
 }
 
@@ -91,19 +101,33 @@ void Main_Window::load_settings( void )
 void Main_Window::save_column_settings( void )
 {
    QSettings settings;
-   settings.setValue( SET_COLUMN_W1, externals_TV->columnWidth(0) );
-   settings.setValue( SET_COLUMN_W2, externals_TV->columnWidth(1) );
-   settings.setValue( SET_COLUMN_W3, externals_TV->columnWidth(2) );
-   settings.setValue( SET_COLUMN_W4, externals_TV->columnWidth(3) );
+
+   if( data_model == nullptr )
+      return;
+
+   settings.beginWriteArray( SET_COLUMN );
+   for( int i=0; i < data_model->columnCount(); i++ )
+   {
+      settings.setArrayIndex( i );
+
+      // save it only, if it is > 0
+      if( externals_TV->columnWidth(i)  > 0 )
+         settings.setValue( SET_COLUMN_W, externals_TV->columnWidth(i) );
+   }
+   settings.endArray();
 }
 
 void Main_Window::load_column_settings( void )
 {
    QSettings settings;
-   externals_TV->setColumnWidth( 0, settings.value( SET_COLUMN_W1, 100 ).toInt() );
-   externals_TV->setColumnWidth( 1, settings.value( SET_COLUMN_W2, 100 ).toInt() );
-   externals_TV->setColumnWidth( 2, settings.value( SET_COLUMN_W3, 100 ).toInt() );
-   externals_TV->setColumnWidth( 3, settings.value( SET_COLUMN_W4, 100 ).toInt() );
+
+   int size = settings.beginReadArray( SET_COLUMN );
+   for( int i=0; i < size; i++ )
+   {
+      settings.setArrayIndex( i );
+      externals_TV->setColumnWidth( i, settings.value( SET_COLUMN_W, 100 ).toInt() );
+   }
+   settings.endArray();
 }
 
 /// @details
@@ -112,6 +136,7 @@ void Main_Window::save_settings( void )
 {
    QSettings settings;
    settings.setValue( SET_CP_PATH, working_cp_path );
+   settings.setValue( SET_SELECT, select_state );
 
    // we only save the column settings, if we have a valid
    // model loaded
@@ -123,16 +148,14 @@ void Main_Window::save_settings( void )
 void Main_Window::setup_actions( void )
 {
    context_menu      = new QMenu( this->externals_TV );
+   header_menu       = new QMenu( this->externals_TV );
 
    quit_action       = new QAction(tr( "&Quit" ),                    this);
    open_action       = new QAction(tr( "&Open SVN Working Copy" ),   this);
    reload_action     = new QAction(tr( "&Reload"),                   this);
    discard_action    = new QAction(tr( "&Discard"),                  this);
    save_action       = new QAction(tr( "&Save"),                     this);
-
    browse_rev_action = new QAction(tr( "&Browse"),                   this);
-
-
 
 
    connect( quit_action,       SIGNAL(triggered()), qApp, SLOT(quit()));
@@ -176,6 +199,8 @@ void Main_Window::update_tree( void )
       redo_action = data_model->create_redo_action( this, tr("&Redo" ) );
       redo_action->setShortcuts(QKeySequence::Redo);
 
+      setup_header_actions( );
+
       ui.edit_M->clear();
       ui.edit_M->addAction( undo_action    );
       ui.edit_M->addAction( redo_action    );
@@ -183,6 +208,71 @@ void Main_Window::update_tree( void )
    }
 
 }
+
+
+/// @details
+///      This also manages the initial visibility of the columns, depending on `select_state`.
+void Main_Window::setup_header_actions( void )
+{
+   if( data_model == nullptr )
+      return;
+
+   // clear the older menu
+   header_menu->clear();
+
+   // iterate over all columns and add a menu entry
+   // we start with 1, because we force keeping the name column
+   for( int i=1; i < data_model->columnCount(); i++ )
+   {
+      QWidgetAction * sel_action = new QWidgetAction( header_menu );
+      QCheckBox *box             = new QCheckBox( header_menu );
+
+      box->setText( data_model->headerData( i, Qt::Horizontal, Qt::DisplayRole  ).toString() );
+      sel_action->setDefaultWidget( box );
+      header_menu->addAction( sel_action );
+
+
+      if( !( select_state & ( 1<<i ) ) )
+      {
+         externals_TV->setColumnHidden( i, false );
+         box->setCheckState( Qt::Checked );
+      }
+      else
+      {
+         externals_TV->setColumnHidden( i, true );
+         box->setCheckState( Qt::Unchecked );
+      }
+
+      // connect to a lambda, which handles the individual action
+      connect( box, &QCheckBox::stateChanged,
+            [=](int state)
+            { 
+               if( state )
+               {
+                  QSettings settings;
+                  select_state &= ~( 1 << i );
+                  externals_TV->setColumnHidden( i, false );
+
+                  load_column_settings();
+               // // read the column with from the settings
+               // int size = settings.beginReadArray( SET_COLUMN );
+               // if( i < size )
+               // {
+               //    settings.setArrayIndex( i );
+               //    externals_TV->setColumnWidth( i, settings.value( SET_COLUMN_W, 100 ).toInt() );
+               // }
+               // settings.endArray();
+               }
+               else
+               {
+                  select_state |=  ( 1 << i );
+                  externals_TV->setColumnHidden( i, true );
+               }
+            } );
+   }
+
+}
+
 
 void Main_Window::on_working_copy_browse_PB_clicked( void )
 {
@@ -254,6 +344,12 @@ void Main_Window::open_context_menu(const QPoint &point)
       context_menu->exec( externals_TV->mapToGlobal(point));
    }    
 }
+
+void Main_Window::open_header_menu(const QPoint & point )
+{
+   header_menu->exec( externals_TV->mapToGlobal( point ) );
+}
+
 
 void Main_Window::browse_rev( void )
 {

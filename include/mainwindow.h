@@ -24,6 +24,7 @@
 #include <QWidget>
 #include <QMap>
 #include <QDebug>
+#include <QWidgetAction>
 
 #include "tree_view.h"
 #include "ui_MainWindow.h"
@@ -96,6 +97,10 @@ private:
    /// @brief Initializes most of the actions (except the edit settings).
    void setup_actions( void );
 
+
+   /// @brief Initializes the header menu with check-boxes.
+   void setup_header_actions( void );
+
    /// @brief Expanded state.
    bool expanded;
 
@@ -126,12 +131,17 @@ private:
    /// @brief Pointer to the context menu used for the treeview.
    QMenu   * context_menu;
 
+   /// @brief Menu for the header of the treeview
+   QMenu   * header_menu;
+
    /// @brief Pointer to revision-browse action.
    QAction * browse_rev_action;
 
-
    /// @brief The last index, where the context of the tree-view is opened.
    QModelIndex last_context_index;
+
+   /// @brief The selection state
+   quint32 select_state;
 
 private slots:
 
@@ -158,10 +168,15 @@ private slots:
    /// @brief Handler slot for the discard_PB button.
    void on_discard_PB_clicked( void );
 
+   /// @brief 
    void browse_rev( void );
 
    /// @brief
    void open_context_menu(const QPoint &point);
+
+   /// @brief
+   void open_header_menu(const QPoint &point);
+
 
 }; // class Main_Window
 
