@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QProcess>
 #include <QCheckBox>
+#include <QMessageBox>
 
 #include <const.h>
 #include "mainwindow.h"
@@ -366,7 +367,12 @@ void Main_Window::browse_rev( void )
          }
       }
       else
-         qDebug() << "Load failed";
+      {
+         QMessageBox * m = new QMessageBox( );
+         m->setText( tr("Failed to load the SVN revision log" ) );
+         m->setDetailedText( "Path: " + path );
+         m->exec();
+      }
    }
 }
 
