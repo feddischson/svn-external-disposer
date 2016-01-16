@@ -122,7 +122,8 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
 void Data_Model::change_external( 
       const QString & path,
       QVariant new_value,
-      int index
+      int index,
+      bool push_to_undostack
       ) 
 {
    QVariant old_value;
@@ -195,12 +196,16 @@ void Data_Model::change_external(
    if( modified )
    {
       external->modified = true;
-      undo_stack.push( new External_Command(
-               this,
-               path,
-               index,
-               new_value,
-               old_value ) );
+
+      if( push_to_undostack )
+      {
+         undo_stack.push( new External_Command(
+                  this,
+                  path,
+                  index,
+                  new_value,
+                  old_value ) );
+      }
 
       emit( layoutChanged() );
    }

@@ -142,10 +142,18 @@ public:
    /// @param index
    ///         The column index (starting from 0)
    ///
+   /// @param push_to_undostack
+   ///         A External_Command is pushed to the undo stack in case of true.
+   ///         This is necessary because this function is re-used multiple-times, also
+   ///         by the External_Command. In this case, a undo/redo-action is triggered
+   ///         and push_to_undostack is set to false to avoid another instnace on the
+   ///         undo-stack.
+   ///
    void change_external(
       const QString & path,
       QVariant new_value,
-      int index );
+      int index,
+      bool push_to_undostack = true );
 
 
 

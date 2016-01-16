@@ -46,13 +46,13 @@ External_Command::External_Command(
 
 void External_Command::undo()
 {
-   data_model->change_external( path, old_value, index );
+   data_model->change_external( path, old_value, index, false );
 }
 
 void External_Command::redo()
 {
    if( called_once )
-      data_model->change_external( path, new_value, index );
+      data_model->change_external( path, new_value, index, false );
    else
       called_once = true; 
 }
