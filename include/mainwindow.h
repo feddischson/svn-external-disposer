@@ -29,6 +29,7 @@
 #include "tree_view.h"
 #include "ui_MainWindow.h"
 #include "data_model.h"
+#include "externals_dialog.h"
 
 namespace SVN_EXTERNALS_DISPOSER
 {
@@ -101,6 +102,9 @@ private:
    /// @brief Initializes the header menu with check-boxes.
    void setup_header_actions( void );
 
+   /// @brief 
+   bool eventFilter(QObject *obj, QEvent *e);
+
    /// @brief Expanded state.
    bool expanded;
 
@@ -128,8 +132,11 @@ private:
    /// @brief Pointer to the tree-view instance.
    Tree_View * externals_TV;
 
-   /// @brief Pointer to the context menu used for the treeview.
+   /// @brief Pointer to the context menu used for browsing the svn revisions.
    QMenu   * context_menu;
+
+   /// @brief Pointer to the context menu used for browsing the svn revisions.
+   QMenu   * revision_menu;
 
    /// @brief Menu for the header of the treeview
    QMenu   * header_menu;
@@ -137,11 +144,23 @@ private:
    /// @brief Pointer to revision-browse action.
    QAction * browse_rev_action;
 
+   /// @brief Pointer to revision-browse action.
+   QAction * edit_externals_action;
+
    /// @brief The last index, where the context of the tree-view is opened.
    QModelIndex last_context_index;
 
    /// @brief The selection state
    quint32 select_state;
+
+
+   /// @brief Pointer to the current open Externals_Dialog.
+   /// @details
+   ///   The pointer is assigned after creating the dialog instance and
+   ///   before executing the dialog. 
+   ///   After finishing the exuction, the instance is deleted (manually) and
+   ///   the pointer is set to nullptr.
+   Externals_Dialog * externals_dialog;
 
 private slots:
 
@@ -170,6 +189,9 @@ private slots:
 
    /// @brief 
    void browse_rev( void );
+
+   /// @brief 
+   void edit_externals( void );
 
    /// @brief
    void open_context_menu(const QPoint &point);

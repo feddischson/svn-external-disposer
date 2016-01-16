@@ -111,6 +111,12 @@ public:
    /// @brief  Provides a redo action (from QUndoStack)
    QAction * create_redo_action(QObject * parent, const QString & prefix = QString()) const;
 
+   /// @brief Returns the current undo index.
+   int get_undo_index( void );
+
+   /// @brief Sets the current undo index.
+   void set_undo_index( int index );
+
 
    /// @brief  Restores the backuped data.
    void restore( void );
@@ -118,11 +124,14 @@ public:
 
    /// @brief Returns true if the index is an external entry.
    bool is_external( const QModelIndex & i );
-private:
 
 
-   /// @brief Provide External_Command access to private data
-   friend class External_Command;
+   /// @brief Returns true if the index is a directory
+   bool is_directory( const QModelIndex & i );
+
+
+   /// @brief  Returns a list of strings where each is a target path of an external.
+   QList< QString > get_externals_targets( const QString path );
 
 
    /// @brief Changes an external in external_map
@@ -132,13 +141,31 @@ private:
    ///         The new value
    /// @param index
    ///         The column index (starting from 0)
-   /// @param modified [out]
-   ///         Is set to true, if the data is modified, otherwise to false
-   QVariant change_external(
+   ///
+   void change_external(
       const QString & path,
       QVariant new_value,
-      int index,
-      bool * modified );
+      int index );
+
+
+
+   /// @brief  Function to find an external entry in our internal map via QModelIndex
+   T_SP_External get_external( const QModelIndex & index ) const;
+
+   /// @brief  Function to find an external entry in our internal map via path
+   T_SP_External get_external( const QString & path ) const;
+
+
+   /// @brief Returns true for a giben external path, if the externals is modified.
+   bool is_external_modified( const QString & path ) const;
+
+
+private:
+
+
+   /// @brief Provide External_Command access to private data
+   friend class External_Command;
+
 
 
    void transfer( 
@@ -151,13 +178,6 @@ private:
    /// @brief Creates a backup of the external information
    void backup( void );
 
-
-   /// @brief Returns true for a giben external path, if the externals is modified.
-   bool is_external_modified( const QString & path ) const;
-
-
-   /// @brief  Function to find an external entry in our internal map
-   T_SP_External get_external( const QModelIndex & index ) const;
 
 
    /// @brief  Initializes the svn:externals map external_map

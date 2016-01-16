@@ -130,7 +130,7 @@ private:
    QString working_cp_path;
 
    /// @brief UI instance, created from forms/LogDialog.ui.
-   Ui::Dialog ui;
+   Ui::LogDialog ui;
 
    /// @brief Falg to remember, if there was already once selected a row.
    bool was_selected;

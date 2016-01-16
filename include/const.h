@@ -94,11 +94,12 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString SET_SELECT        = "select_state";
    /// @}
 
+
    /// @defgroup gui_const  GUI string constants
    /// String constants used within the GUI.
    /// @{
    static const QString GUI_HEAD_TARGET       = QObject::tr( "Target"             );
-   static const QString GUI_HEAD_EXTERNAL     = QObject::tr( "External Path"      );
+   static const QString GUI_HEAD_EXTERNAL     = QObject::tr( "URL"                );
    static const QString GUI_HEAD_PEG          = QObject::tr( "Peg Revision"       );
    static const QString GUI_HEAD_OPERATIVE    = QObject::tr( "Operative Revision" );
    static const QString GUI_HEAD_PATH         = QObject::tr( "Defined at"         );
@@ -108,7 +109,11 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString GUI_HEAD_DATE         = QObject::tr( "Date"               );
    /// @}
 
+   /// @brief The background color for modified svn:externals entries
    static const QColor COL_MODIFIED          = Qt::yellow;
+
+   /// @brief The background color for unmodified svn:externals entries
+   static const QColor COL_NOT_MODIFIED      = Qt::white;
 
    /// 
    /// @defgroup regex Regular Expressions

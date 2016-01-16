@@ -25,8 +25,9 @@
 #include <QProcess>
 #include <QCheckBox>
 #include <QMessageBox>
+#include <QKeyEvent>
 
-#include <const.h>
+#include "const.h"
 #include "mainwindow.h"
 #include "log_dialog.h"
 
@@ -38,7 +39,8 @@ Main_Window::Main_Window( QWidget *parent  )
      data_model( nullptr ),
      working_cp_path( "" ),
      expanded( false ),
-     select_state( 0 )
+     select_state( 0 ),
+     externals_dialog( nullptr )
 {
    ui.setupUi(this);
 
@@ -148,25 +150,29 @@ void Main_Window::save_settings( void )
 
 void Main_Window::setup_actions( void )
 {
-   context_menu      = new QMenu( this->externals_TV );
-   header_menu       = new QMenu( this->externals_TV );
+   context_menu          = new QMenu( this->externals_TV );
+   revision_menu         = new QMenu( this->externals_TV );
+   header_menu           = new QMenu( this->externals_TV );
 
-   quit_action       = new QAction(tr( "&Quit" ),                    this);
-   open_action       = new QAction(tr( "&Open SVN Working Copy" ),   this);
-   reload_action     = new QAction(tr( "&Reload"),                   this);
-   discard_action    = new QAction(tr( "&Discard"),                  this);
-   save_action       = new QAction(tr( "&Save"),                     this);
-   browse_rev_action = new QAction(tr( "&Browse"),                   this);
+   quit_action           = new QAction(tr( "&Quit" ),                    this);
+   open_action           = new QAction(tr( "&Open SVN Working Copy" ),   this);
+   reload_action         = new QAction(tr( "&Reload"),                   this);
+   discard_action        = new QAction(tr( "&Discard"),                  this);
+   save_action           = new QAction(tr( "&Save"),                     this);
+   browse_rev_action     = new QAction(tr( "&Browse"),                   this);
+   edit_externals_action = new QAction(tr( "&Edit Externals"),           this);
 
 
-   connect( quit_action,       SIGNAL(triggered()), qApp, SLOT(quit()));
-   connect( open_action,       SIGNAL(triggered()), this, SLOT(on_working_copy_browse_PB_clicked()));
-   connect( reload_action,     SIGNAL(triggered()), this, SLOT(on_reload_PB_clicked()));
-   connect( discard_action,    SIGNAL(triggered()), this, SLOT(on_discard_PB_clicked()));
-   connect( save_action,       SIGNAL(triggered()), this, SLOT(on_save_PB_clicked()));
-   connect( browse_rev_action, SIGNAL(triggered()), this, SLOT(browse_rev()));
+   connect( quit_action,           SIGNAL(triggered()), qApp, SLOT(quit()));
+   connect( open_action,           SIGNAL(triggered()), this, SLOT(on_working_copy_browse_PB_clicked()));
+   connect( reload_action,         SIGNAL(triggered()), this, SLOT(on_reload_PB_clicked()));
+   connect( discard_action,        SIGNAL(triggered()), this, SLOT(on_discard_PB_clicked()));
+   connect( save_action,           SIGNAL(triggered()), this, SLOT(on_save_PB_clicked()));
+   connect( browse_rev_action,     SIGNAL(triggered()), this, SLOT(browse_rev()));
+   connect( edit_externals_action, SIGNAL(triggered()), this, SLOT(edit_externals()));
 
-   connect( externals_TV, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(open_context_menu(const QPoint &)));
+   connect( externals_TV, SIGNAL(customContextMenuRequested(const QPoint &)), 
+         this, SLOT(open_context_menu(const QPoint &)));
 
    ui.file_M->addAction( open_action );
    ui.file_M->addAction( reload_action  );
@@ -174,7 +180,10 @@ void Main_Window::setup_actions( void )
    ui.file_M->addAction( save_action );
    ui.file_M->addAction( quit_action );
 
-   context_menu->addAction( browse_rev_action );
+
+   revision_menu->addAction( browse_rev_action );
+   revision_menu->addAction( edit_externals_action );
+   context_menu->addAction( edit_externals_action  );
 }
 
 
@@ -336,14 +345,22 @@ void Main_Window::on_discard_PB_clicked( void )
 void Main_Window::open_context_menu(const QPoint &point)
 {
    QModelIndex index = externals_TV->indexAt(point);
-   if(   index.isValid() 
-      && ( index.column() == 6 || index.column() == 7 ) 
-      && data_model->is_external( index )
+   if( ! index.isValid() )
+      return;
+
+
+   if(  ( index.column() == 6 || index.column() == 7 ) 
+       && data_model->is_external( index )
       )
    {
       last_context_index = index;
+      revision_menu->exec( externals_TV->mapToGlobal(point));
+   }
+   else if( data_model->is_directory( index ) )
+   {
+      last_context_index = index;
       context_menu->exec( externals_TV->mapToGlobal(point));
-   }    
+   }
 }
 
 void Main_Window::open_header_menu(const QPoint & point )
@@ -377,6 +394,36 @@ void Main_Window::browse_rev( void )
 }
 
 
+void Main_Window::edit_externals( void )
+{
+   if( data_model == nullptr )
+      return;
+
+   QString path = data_model->filePath( last_context_index );
+
+   // note: we don't set the parent widget and
+   // delete the dialog manually
+   externals_dialog = new Externals_Dialog(
+         path,
+         data_model
+         );
+   externals_dialog->installEventFilter( this );
+
+   auto index = data_model->get_undo_index( );
+
+   externals_dialog->exec();
+
+   if( !externals_dialog->result() )
+   {
+      // discard changes
+      data_model->set_undo_index( index );
+   }
+
+   // delete the dialog 
+   delete externals_dialog;
+   externals_dialog = nullptr;
+}
+
 
 Main_Window::operator QString()
 {
@@ -384,6 +431,34 @@ Main_Window::operator QString()
    QTextStream ts(&s);
    ts  << "Main_Window (" << reinterpret_cast< void* >( this ) << "): ";
    return s;
+}
+
+
+bool Main_Window::eventFilter( QObject *obj, QEvent * e )
+{
+   if( obj == externals_dialog && nullptr != externals_dialog )
+   {
+      if( e->type() == QEvent::KeyPress )
+      {
+         QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>( e );
+         if( static_cast< unsigned >( QKeySequence( QKeySequence::Redo )[0] ) 
+               ==  ( keyEvent->key() | keyEvent->modifiers() ) )
+         {
+            redo_action->trigger();
+            externals_dialog->setup_table();
+            return true;
+         }
+         if( static_cast< unsigned >( QKeySequence( QKeySequence::Undo )[0] ) 
+               ==  ( keyEvent->key() | keyEvent->modifiers() ) )
+         {
+            undo_action->trigger();
+            externals_dialog->setup_table();
+            return true;
+         }
+      }
+   }
+
+   return false;
 }
 
 }; // namespace SVN_EXTERNALS_DISPOSER

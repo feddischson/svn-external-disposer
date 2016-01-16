@@ -59,9 +59,15 @@ QAction * Data_Model::create_redo_action(QObject * parent, const QString & prefi
 
 T_SP_External Data_Model::get_external( const QModelIndex & index ) const
 {
-   QString path = QFileSystemModel::filePath( index );
+   return get_external( QFileSystemModel::filePath( index ) );
+}
+
+
+T_SP_External Data_Model::get_external( const QString & path ) const
+{
    return external_map.value( path );
 }
+
 
 
 QVariant Data_Model::data(const QModelIndex &index, int role) const 
@@ -96,7 +102,6 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
          if( !external )
             return QVariant();
 
-         //qDebug() << "is an external " << QFileSystemModel::filePath( index );
          switch( index.column() - 4 )
          {
             case  0: return external->local_path;
@@ -114,20 +119,19 @@ QVariant Data_Model::data(const QModelIndex &index, int role) const
 }
 
 
-QVariant Data_Model::change_external( 
+void Data_Model::change_external( 
       const QString & path,
       QVariant new_value,
-      int index,
-      bool * modified 
+      int index
       ) 
 {
    QVariant old_value;
-   *modified = false;
+   bool modified = false;
 
    // get the external
    T_SP_External external = external_map.value( path );
    if( !external )
-      return old_value;
+      return;
 
    switch( index )
    {
@@ -137,7 +141,7 @@ QVariant Data_Model::change_external(
             {
                old_value = external->local_path;
                external->local_path = new_value;
-               *modified = true;
+               modified = true;
             }
             break;
          }
@@ -147,7 +151,7 @@ QVariant Data_Model::change_external(
             {
                old_value = external->url;
                external->url = new_value;
-               *modified = true;
+               modified = true;
             }
             break;
          }
@@ -157,7 +161,7 @@ QVariant Data_Model::change_external(
             {
                old_value = external->peg_revision;
                external->peg_revision = new_value;
-               *modified = true;
+               modified = true;
             }
             break;
          }
@@ -167,7 +171,7 @@ QVariant Data_Model::change_external(
             {
                old_value = external->operative_revision;
                external->operative_revision = new_value;
-               *modified = true;
+               modified = true;
             }
             break;
          }
@@ -177,23 +181,29 @@ QVariant Data_Model::change_external(
             {
                old_value = external->storage_path;
                external->storage_path = new_value;
-               *modified = true;
+               modified = true;
             }
             break;
          }
       default: 
          {
-            *modified = false; 
+            modified = false; 
             break;
          }
    }
 
-   if( *modified )
+   if( modified )
    {
       external->modified = true;
+      undo_stack.push( new External_Command(
+               this,
+               path,
+               index,
+               new_value,
+               old_value ) );
+
       emit( layoutChanged() );
    }
-   return old_value;
 }
 
 
@@ -205,24 +215,11 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
 
       if( role == Qt::EditRole )
       {
-         bool modified;
          QString path = QFileSystemModel::filePath( index );
-         QVariant old_value = change_external( 
+         change_external( 
                path, 
                value,
-               column,
-               &modified );
-
-
-         if( modified )
-         {
-            undo_stack.push( new External_Command(
-                     this,
-                     path,
-                     column,
-                     value,
-                     old_value ) );
-         }
+               column );
 
          return true;
       }
@@ -491,6 +488,30 @@ bool Data_Model::is_external( const QModelIndex & i )
       return false;
 }
 
+bool Data_Model::is_directory( const QModelIndex & i )
+{
+   QDir dir( QFileSystemModel::filePath( i ) ); 
+   return dir.exists();
+}
+
+
+
+QList< QString > Data_Model::get_externals_targets( const QString path )
+{
+   QList< QString > result;
+   auto i = property_map.find( path );
+
+   // iterate over all entries for this path and add a copy into our result hash
+   while (i != property_map.end() && i.key() == path)
+   {
+      QString target_path = i.value()->local_path.toString();
+      QString abs_path = QDir( i.key() ).filePath( target_path );
+      result.append( abs_path );
+      i++;
+   }
+   return result;
+}
+
 
 void Data_Model::backup( void )
 {
@@ -511,6 +532,20 @@ void Data_Model::backup( void )
    }
 
 }
+
+/// @details
+///   Just forwards the call to the internal `undo_stack`.
+int Data_Model::get_undo_index( void )
+{
+   return undo_stack.index();
+}
+
+///   Just forwards the call to the internal `undo_stack`.
+void Data_Model::set_undo_index( int index )
+{
+   undo_stack.setIndex( index );
+}
+
 
 }; // namespace SVN_EXTERNALS_DISPOSER
 
