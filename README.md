@@ -80,6 +80,18 @@ qmake test.pro
 ./test_svn_externals_disposer
 ```
 
+Version log
+=================
+
+v1.0.0
+--------
+  - Shows svn:externals information in a file-browser
+  - Allows editing svn:externals properties via file-browser or dialog
+  - Includes a revision history browser
+  - Highlights changes
+  - Allows to revert changes
+  - Allows to save changes
+
 
 License
 =======================
