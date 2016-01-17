@@ -111,10 +111,21 @@
      <string>&amp;File</string>
     </property>
    </widget>
+   <widget class="QMenu" name="help_M">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
    <addaction name="file_M"/>
    <addaction name="edit_M"/>
+   <addaction name="help_M"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="about_A">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

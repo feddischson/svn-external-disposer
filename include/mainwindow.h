@@ -129,6 +129,9 @@ private:
    /// @brief Pointer to save action instance.
    QAction * save_action;
 
+   /// @brief Pointer to the about action instance.
+   QAction * about_action;
+
    /// @brief Pointer to the tree-view instance.
    Tree_View * externals_TV;
 
@@ -183,6 +186,10 @@ private slots:
 
    /// @brief Handler slot for the reload_PB button.
    void on_reload_PB_clicked( void );
+
+   /// @brief Opens an About dialog.
+   void about_triggered( void );
+
 
    /// @brief Handler slot for the discard_PB button.
    void on_discard_PB_clicked( void );

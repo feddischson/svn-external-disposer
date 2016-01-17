@@ -33,6 +33,27 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString APP_NAME             = "SVN-Externals-Disposer";
    static const QString ORGANIZATION_NAME    = "SVN-Externals-Disposer";
    static const QString ORGANIZATION_DOMAIN  = "SVN.Externals.Disposer";
+   static const QString APP_REPO_URL         = "https://github.com/feddischson/svn-externals-disposer";
+   static const QString APP_LICENSE          = "GPLv3";
+   static const QString APP_LICENSE_TEXT     = "\n\
+Copyright (C) 2015  Christian Haettich [feddischson]        \n\
+                                                            \n\
+This program is free software; you can redistribute it      \n\
+and/or modify it under the terms of the GNU General Public  \n\
+License as published by the Free Software Foundation;       \n\
+either version 3 of the License, or (at your option)        \n\
+any later version.                                          \n\
+                                                            \n\
+This program is distributed in the hope that it will        \n\
+be useful, but WITHOUT ANY WARRANTY; without even the       \n\
+implied warranty of MERCHANTABILITY or FITNESS FOR A        \n\
+PARTICULAR PURPOSE. See the GNU General Public License      \n\
+for more details.                                           \n\
+                                                            \n\
+You should have received a copy of the GNU General          \n\
+Public License along with this program; if not, see         \n\
+<http://www.gnu.org/licenses/>.                             \n\
+";
    /// @}
 
    /// @defgroup xml_const  XML string constants
@@ -209,6 +230,17 @@ namespace SVN_EXTERNALS_DISPOSER
    ///
    static const QString OLD_EXTERNAL_REGEX    = "^\\s*(\\S+)\\s+(-r\\s+(\\d+)\\s*)?(http:\\/\\/\\S*)\\s*$";
    /// @}
+
+
+   /// @brief About message for this tool, used by the about dialog.
+   static const QString ABOUT_THIS_SOFTWARE  =                "\n" + 
+                                               APP_NAME     + "\n" +
+                                               APP_REPO_URL + "\n" +
+                                               "Version: "  +
+                                               APP_VERSION  + "\n" + 
+                                               "License: "  + 
+                                               APP_LICENSE  + "\n\n" +
+                                               APP_LICENSE_TEXT;
 
 
 }; // namespace SVN_EXTERNALS_DISPOSER

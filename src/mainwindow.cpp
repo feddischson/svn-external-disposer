@@ -162,6 +162,7 @@ void Main_Window::setup_actions( void )
    save_action           = new QAction(tr( "&Save"),                     this);
    browse_rev_action     = new QAction(tr( "&Browse"),                   this);
    edit_externals_action = new QAction(tr( "&Edit Externals"),           this);
+   about_action          = new QAction(tr( "&About"),                    this);
 
 
    connect( quit_action,           SIGNAL(triggered()), qApp, SLOT(quit()));
@@ -171,8 +172,8 @@ void Main_Window::setup_actions( void )
    connect( save_action,           SIGNAL(triggered()), this, SLOT(on_save_PB_clicked()));
    connect( browse_rev_action,     SIGNAL(triggered()), this, SLOT(browse_rev()));
    connect( edit_externals_action, SIGNAL(triggered()), this, SLOT(edit_externals()));
-
-   connect( externals_TV, SIGNAL(customContextMenuRequested(const QPoint &)), 
+   connect( about_action,          SIGNAL(triggered()), this, SLOT( about_triggered()));
+   connect( externals_TV,          SIGNAL(customContextMenuRequested(const QPoint &)), 
          this, SLOT(open_context_menu(const QPoint &)));
 
    ui.file_M->addAction( open_action );
@@ -185,6 +186,7 @@ void Main_Window::setup_actions( void )
    revision_menu->addAction( browse_rev_action );
    revision_menu->addAction( edit_externals_action );
    context_menu->addAction( edit_externals_action  );
+   ui.help_M->addAction( about_action );
 }
 
 
@@ -341,6 +343,14 @@ void Main_Window::on_discard_PB_clicked( void )
       data_model->restore( );
    save_settings();
 }
+
+void Main_Window::about_triggered( void )
+{
+   QMessageBox::about( this, tr("About"), 
+         ABOUT_THIS_SOFTWARE );
+}
+
+
 
 
 void Main_Window::open_context_menu(const QPoint &point)
