@@ -43,13 +43,6 @@ Log_Dialog::Log_Dialog(
 
    ui.next_PB->setText( tr( "Next " ) + QString::number(SVN_N_LOAD) );
 
-   QStringList headers;
-   headers << GUI_HEAD_REVISION
-           << GUI_HEAD_AUTHOR
-           << GUI_HEAD_MESSAGE
-           << GUI_HEAD_DATE;
-   ui.log_TW->setHorizontalHeaderLabels( headers );
-
 
    connect( 
          ui.log_TW, 
@@ -67,7 +60,7 @@ bool Log_Dialog::load( void )
 {
    bool result = load_svn_log( );
    if( result )
-      update_table();
+      update_table( true );
    return result;
 }
 
@@ -229,12 +222,21 @@ void Log_Dialog::update_table( bool clear )
 
    if( clear )
    {
+      QStringList headers;
+
       // save the current selected revision
       last_selected_revision = get_revision().toString();
 
       // clear the table widget
       ui.log_TW->clear();
       table_entries = 0;
+
+      headers << GUI_HEAD_REVISION
+              << GUI_HEAD_AUTHOR
+              << GUI_HEAD_MESSAGE
+              << GUI_HEAD_DATE;
+      ui.log_TW->setHorizontalHeaderLabels( headers );
+
    }
    else
       table_entries = ui.log_TW->rowCount();
@@ -268,7 +270,10 @@ QString Log_Dialog::short_message( const SVN_Log & log ) const
 QVariant Log_Dialog::get_revision( void )
 {
    auto l = ui.log_TW->selectionModel()->selectedRows( 0 );
-   return l[0].data();
+   if( l.size() == 0 )
+      return QVariant();
+   else
+      return l[0].data();
 }
 
 void Log_Dialog::selection_changed( void )
