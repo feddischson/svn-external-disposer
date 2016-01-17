@@ -56,7 +56,7 @@ class External
    External& operator= (const External & rhs ) = default;
    External & operator=( External  && rhs )    = default;
    External ( External  && rhs )               = default;
-   ~External ()                                = default;
+   virtual ~External ()                        = default;
    /// @}
 
    /// @brief QString operator: The resulting string is a svn:externals property 
