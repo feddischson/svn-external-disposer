@@ -90,6 +90,7 @@ Public License along with this program; if not, see         \n\
    static const QString SVN_USER          = "--username";
    static const QString SVN_PASS          = "--password";
    static const QString SVN_REVISION      = "-r";
+   static const QString SVN_VERSION       = "--version";
    /// @}
 
    /// @brief Number of svn log entries 
