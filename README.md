@@ -24,6 +24,7 @@ and some discussions about svn:externals and why it is maybe not good to use thi
    - http://stackoverflow.com/a/304036
    - http://www.christoph-jahn.com/?p=675
 
+The latest stable version for windows can be downloaded from [here][win32_v1.0.0] and the latest stable sources can be downloaded as zip from [here][source_v1.0.0].
 
 
 
@@ -85,12 +86,18 @@ Version log
 
 v1.0.0
 --------
+This version can be found [here][v1.0.0]:
+
   - Shows svn:externals information in a file-browser
   - Allows editing svn:externals properties via file-browser or dialog
   - Includes a revision history browser
   - Highlights changes
   - Allows to revert changes
   - Allows to save changes
+  - A windows build can be downloaded from [here][win32_v1.0.0].
+  - The sources code can be downloaded as zip from [here][source_v1.0.0].
+
+
 
 
 License
@@ -115,3 +122,8 @@ You should have received a copy of the GNU General
 Public License along with this program; if not, see 
 <http://www.gnu.org/licenses/>. 
 ```
+
+[v1.0.0]: https://github.com/feddischson/svn-externals-disposer/releases/tag/v1.0.0
+[win32_v1.0.0]: https://github.com/feddischson/svn-externals-disposer/releases/download/v1.0.0/svn_externals_disposer_v1.0.0_win32.zip
+[source_v1.0.0]: https://github.com/feddischson/svn-externals-disposer/archive/v1.0.0.zip
+
