@@ -378,7 +378,14 @@ void Main_Window::browse_rev( void )
       Log_Dialog *d = new Log_Dialog( path, this );
       if( d->load() )
       {
+
+
+         auto current_revision = data_model->data( last_context_index, Qt::DisplayRole ).toString();
+         if( current_revision.length() > 0 )
+            d->select_revision( current_revision );
+
          d->exec();
+
          if( d->result() )
          {
             data_model->setData( last_context_index, d->get_revision(), Qt::EditRole  );

@@ -33,7 +33,7 @@ Log_Dialog::Log_Dialog(
       QWidget *parent  ) 
    : QDialog( parent ),
      working_cp_path( working_cp_path ),
-     was_selected( false )
+     last_selected_revision( "" )
 {
    ui.setupUi(this);
    ui.log_TW->setColumnCount( 4 );
@@ -221,6 +221,10 @@ void Log_Dialog::update_table( bool clear )
 
    if( clear )
    {
+      // save the current selected revision
+      last_selected_revision = get_revision().toString();
+
+      // clear the table widget
       ui.log_TW->clear();
       table_entries = 0;
    }
@@ -243,11 +247,8 @@ void Log_Dialog::update_table( bool clear )
 
    // if there are entries and this is the first call
    //   -> select the first row
-   if( !was_selected && delta > 0 )
-   {
-      was_selected = false;
-      ui.log_TW->selectRow( 0 );
-   }
+   if( delta > 0 )
+      select_revision( last_selected_revision );
 
 }
 
@@ -330,6 +331,23 @@ Log_Dialog::operator QString()
        << "TODO=" << "Add more content of this instance here @ " 
        << __FILE__ << ":" << __LINE__;
    return s;
+}
+
+
+void Log_Dialog::select_revision( const QString & revision )
+{
+   for( auto item : ui.log_TW->findItems( revision, Qt::MatchExactly ) )
+   {
+      if( item->column() == LOGDIALOG_REVISION_COLUMN )
+      {
+         ui.log_TW->selectRow( item->row() );
+         last_selected_revision = revision;
+         return;
+      }
+   }
+
+   // select the first row if we didn't find something
+   ui.log_TW->selectRow( 0 );
 }
 
 

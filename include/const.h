@@ -86,6 +86,15 @@ namespace SVN_EXTERNALS_DISPOSER
    static const qint32  SYS_PROCESS_TIMEOUT = 3000; 
    /// @}
 
+
+
+   /// @defgroup table_cols Table Column constants
+   /// Used to select and idendify columns
+   /// @{
+   static const quint32 LOGDIALOG_REVISION_COLUMN     = 0;
+   /// @}
+
+
    /// @defgroup set_const  QSetting string constants
    /// Used to load/store QSettings.
    /// @{

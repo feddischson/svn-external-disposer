@@ -72,9 +72,12 @@ public:
    // @brief Returns the selected revision.
    QVariant get_revision( void );
 
-
    // @brief loads the initial log via `load_svn_log`.
    bool load( void );
+
+   /// @brief Selects the row which matches @p revision
+   void select_revision( const QString & revision );
+
 
 private:
 
@@ -134,9 +137,8 @@ private:
    /// @brief UI instance, created from forms/LogDialog.ui.
    Ui::LogDialog ui;
 
-   /// @brief Falg to remember, if there was already once selected a row.
-   bool was_selected;
-
+   /// @brief To remember the last selected revision.
+   QString last_selected_revision;
 private slots:
 
    /// @brief Handler for the next_PB push button.
