@@ -306,6 +306,15 @@ void Log_Dialog::on_load_PB_clicked( void )
       to   = to_input.toInt();
       from = from_input.toInt();
    }
+
+
+   // ensure, that `from` is less or equal than `to`
+   if( from > to )
+   {
+      to = from;
+      ui.to_revision_LE->setText( QString::number( to ) );
+   }
+
    result = load_svn_log( to, from, true, false );
    if( result )
       update_table( true );
