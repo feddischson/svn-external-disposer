@@ -170,6 +170,9 @@ private slots:
    /// @brief De-initializes externals_TV and delets it.
    void del_external_model( void );
 
+   /// @brief Handler for the case, when a new working copy is selected.
+   void select_working_copy( const QString & );
+
 
    /// @brief  Creates a new Data_Model
    ///         and sets this instance to ui.working_copy_path_LE

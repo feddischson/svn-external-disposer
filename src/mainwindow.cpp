@@ -55,6 +55,15 @@ Main_Window::Main_Window( QWidget *parent  )
          this,
          SLOT( open_header_menu( QPoint ) ) );
 
+
+   connect(
+         ui.working_copy_path_LE, 
+         SIGNAL( textChanged( const QString & ) ),
+         this,
+         SLOT( select_working_copy( const QString & ) ) );
+
+
+
    QVBoxLayout *layout = new QVBoxLayout;
    layout->addWidget( externals_TV );
    ui.externals_W->setLayout(layout);
@@ -196,6 +205,11 @@ void Main_Window::update_tree( void )
 
    del_external_model();
 
+   // only proceed, if it is an exising directory
+   if( ! QDir( working_cp_path ).exists() )
+      return;
+
+
    // ensure, that we are having a copy of a SVN repo
    // by calling svn info <path>
    process.start( SVN_CMD, QStringList() << SVN_INFO << working_cp_path );
@@ -296,11 +310,17 @@ void Main_Window::on_working_copy_browse_PB_clicked( void )
          QFileDialog::ShowDirsOnly
          | QFileDialog::DontResolveSymlinks);
    if( dir.size() > 0 )
+      ui.working_copy_path_LE->setText( dir );
+}
+
+void Main_Window::select_working_copy( const QString & dir )
+{
+   if( dir.size() > 0 )
    {
       working_cp_path = dir;
-      ui.working_copy_path_LE->setText( dir );
       update_tree();
    }
+
 }
 
 
