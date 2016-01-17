@@ -21,6 +21,7 @@
 //
 
 #include <QDebug>
+#include <QFileInfo>
 
 #include "mainwindow.h"
 #include "const.h"
@@ -33,7 +34,12 @@ int main( int argc, char *argv[] )
     QCoreApplication::setApplicationName( APP_NAME );
     QCoreApplication::setApplicationVersion( APP_VERSION );
     QApplication app(argc, argv);
-    Main_Window w;
+
+    QString path = "";
+    if( argc > 1 )
+      path =  QFileInfo( argv[1] ).absoluteDir().absolutePath();
+
+    Main_Window w(path);
     w.show();
     return app.exec();
 }

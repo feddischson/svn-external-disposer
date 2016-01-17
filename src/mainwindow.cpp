@@ -34,10 +34,12 @@
 namespace SVN_EXTERNALS_DISPOSER
 {
 
-Main_Window::Main_Window( QWidget *parent  ) 
+Main_Window::Main_Window( 
+      const QString & path,
+      QWidget *parent    ) 
    : QMainWindow( parent ),
      data_model( nullptr ),
-     working_cp_path( "" ),
+     working_cp_path( path ),
      expanded( false ),
      select_state( 0 ),
      externals_dialog( nullptr )
@@ -103,7 +105,8 @@ void Main_Window::del_external_model( void )
 void Main_Window::load_settings( void )
 {
    QSettings settings;
-   working_cp_path = settings.value( SET_CP_PATH, "" ).toString();
+   if( working_cp_path.size() == 0 )
+      working_cp_path = settings.value( SET_CP_PATH, "" ).toString();
    ui.working_copy_path_LE->setText( working_cp_path );
    select_state = settings.value( SET_SELECT, 0 ).toInt();
    restoreGeometry(settings.value( SET_WINDOW_SIZE ).toByteArray());

@@ -45,7 +45,8 @@ class Main_Window : public QMainWindow
 public:
 
    /// @brief Ctor: not implemented!
-   explicit Main_Window( QWidget *parent = nullptr );
+   explicit Main_Window( const QString & path, 
+                         QWidget *parent = nullptr );
 
 
    /// @brief  Copy ctor: not implemented!
