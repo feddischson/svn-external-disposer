@@ -1,6 +1,6 @@
 // SVN-Externals-Disposer 
 //
-// Copyright (C) 2015  Christian Haettich [feddischson]
+// Copyright (C) 2016  Christian Haettich [feddischson]
 //
 // This program is free software; you can redistribute it 
 // and/or modify it under the terms of the GNU General Public 
@@ -36,7 +36,7 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString APP_REPO_URL         = "https://github.com/feddischson/svn-externals-disposer";
    static const QString APP_LICENSE          = "GPLv3";
    static const QString APP_LICENSE_TEXT     = "\n\
-Copyright (C) 2015  Christian Haettich [feddischson]        \n\
+Copyright (C) 2016  Christian Haettich [feddischson]        \n\
                                                             \n\
 This program is free software; you can redistribute it      \n\
 and/or modify it under the terms of the GNU General Public  \n\
