@@ -41,6 +41,8 @@ Log_Dialog::Log_Dialog(
    ui.log_TW->setSelectionBehavior(QAbstractItemView::SelectRows);
    ui.log_TW->setSelectionMode(QAbstractItemView::SingleSelection);
 
+   ui.next_PB->setText( tr( "Next " ) + QString::number(SVN_N_LOAD) );
+
    QStringList headers;
    headers << GUI_HEAD_REVISION
            << GUI_HEAD_AUTHOR
@@ -48,6 +50,7 @@ Log_Dialog::Log_Dialog(
            << GUI_HEAD_DATE;
    ui.log_TW->setHorizontalHeaderLabels( headers );
 
+   setWindowTitle( working_cp_path );
    QHeaderView * view = ui.log_TW->horizontalHeader();
    view->setSectionResizeMode(QHeaderView::Stretch);
 }
@@ -61,131 +64,177 @@ bool Log_Dialog::load( void )
 }
 
 bool Log_Dialog::load_svn_log(
-      quint64 from,
-      quint64 n )
+      quint64 to,
+      quint64 n_or_from, 
+      bool    is_range,
+      bool    append )
 {
    QProcess process;
    int trials = SVN_MAX_AUTH_TRIALS;
+   QStringList args;
+   QString stdout_result;
 
-   if( from == std::numeric_limits< quint64 >::max() )
+   // construct the arguments
+   args  << SVN_LOG 
+         << SVN_ALL_REVPROPS
+         << SVN_XML;
+   // svn log -l <n>
+   if( !is_range )
    {
+      args << SVN_LIMIT 
+           << QString::number( n_or_from );
 
-      QStringList args;
-      QString stdout_result;
+      if( to == std::numeric_limits< quint64 >::max( ) )
+      {
+         args << SVN_REVISION
+              << "HEAD:0";
+      }
+      else
+      {
+         args << SVN_REVISION
+              << QString::number( to ) + ":0";
+      }
+   }
+   // svn log -r <n_or_from>:<to>
+   else
+   {
+      if( to == std::numeric_limits< quint64 >::max( ) )
+      {
+         args << SVN_REVISION
+              << "HEAD:" + QString::number( n_or_from );
+      }
+      else
+      {
+         args << SVN_REVISION
+              << QString::number( to ) + ":" + QString::number( n_or_from );
+      }
+   }
+   args << working_cp_path;
 
-      args << SVN_LOG 
-           << SVN_ALL_REVPROPS
-           << SVN_XML 
-           << SVN_LIMIT 
-           << QString::number( n ) 
-           << working_cp_path ;
+   //
+   // First, try it without password
+   //
+   process.start( SVN_CMD, args );
+   if( ! process.waitForFinished( SYS_PROCESS_TIMEOUT ) )
+      return false;
 
-      //
-      // First, try it without password
-      //
-      process.start( SVN_CMD, args );
-      if( ! process.waitForFinished( SYS_PROCESS_TIMEOUT ) )
+   //
+   // If it fails and we need to authenticate, try it
+   //
+   if( process.exitCode() != 0 )
+   {
+      QString error_msg = process.readAllStandardError();
+      if( !error_msg.contains( SVN_ERR_AUTH ) )
          return false;
 
-      //
-      // If it fails and we need to authenticate, try it
-      //
-      if( process.exitCode() != 0 )
+
+      // try with authentication
+      while( trials-- )
       {
-         QString error_msg = process.readAllStandardError();
-         if( !error_msg.contains( SVN_ERR_AUTH ) )
+
+         QStringList args_tmp = args;
+         Login_Dialog *l = new Login_Dialog( this );
+         l->exec();
+         if( l->result() == QDialog::Rejected )
             return false;
 
+         args_tmp 
+            << SVN_USER 
+            << l->username()
+            << SVN_PASS 
+            << l->password();
+         process.start( SVN_CMD, args_tmp );
+         if( ! process.waitForFinished( SYS_PROCESS_TIMEOUT ) )
+            return false;
 
-         // try with authentication
-         while( trials-- )
-         {
-
-            QStringList args_tmp = args;
-            Login_Dialog *l = new Login_Dialog( this );
-            l->exec();
-            if( l->result() == QDialog::Rejected )
-               return false;
-
-            args_tmp 
-               << SVN_USER 
-               << l->username()
-               << SVN_PASS 
-               << l->password();
-            process.start( SVN_CMD, args_tmp );
-            if( ! process.waitForFinished( SYS_PROCESS_TIMEOUT ) )
-               return false;
-
-            if( process.exitCode() == 0 ) 
-               break;
-         }
+         if( process.exitCode() == 0 ) 
+            break;
       }
-
-
-
-      // check if we have really a positive exit code
-      if( process.exitCode() != 0 )
-         return false;
-
-
-      // read and parse the result
-      QDomDocument doc;
-      QString content = process.readAllStandardOutput();
-      if ( !doc.setContent( content ) )
-         return false;
-      QDomNodeList logs  = doc.elementsByTagName( XML_NAME_LOG );
-
-      if( logs.size() != 1 )
-         return false;
-
-      QDomNodeList entries = logs.item(0).childNodes();
-      for( int i=0; i < entries.size(); i++ )
-      {
-         QDomNode entry = entries.item(i);
-
-         if( entry.hasAttributes() && 
-             entry.attributes().contains( XML_NAME_REVISION ) )
-         {
-            QString date   = "";
-            QString msg    = "";
-            QString author = "";
-            QDomElement e    = entry.toElement();
-            QString revision = e.attribute( XML_NAME_REVISION, "" );
-
-            QDomNodeList content = entry.childNodes();
-            for( int j=0; j < content.size(); j++ )
-            {
-               QString name = content.item( j ).nodeName();
-               QString value  = content.item( j ).toElement().text();
-               if( name == XML_NAME_DATE )
-                  date = value;
-               else if( name == XML_NAME_MSG )
-                  msg = value;
-               else if( name == XML_NAME_AUTHOR )
-                  author = value;
-            }
-            log_list.append( SVN_Log( revision, author, msg, date ) );
-         }
-      }
-      return true;
    }
-   // @todo else case and 'load-more' stuff
 
+
+
+   // check if we have really a positive exit code
+   if( process.exitCode() != 0 )
+      return false;
+
+
+   // read and parse the result
+   QDomDocument doc;
+   QString content = process.readAllStandardOutput();
+   if ( !doc.setContent( content ) )
+      return false;
+   QDomNodeList logs  = doc.elementsByTagName( XML_NAME_LOG );
+
+   if( logs.size() != 1 )
+      return false;
+
+
+   // clear the old/last entries if required
+   if( !append )
+      log_list.clear();
+
+   // add new entries
+   QDomNodeList entries = logs.item(0).childNodes();
+   for( int i=0; i < entries.size(); i++ )
+   {
+      QDomNode entry = entries.item(i);
+
+      if( entry.hasAttributes() && 
+          entry.attributes().contains( XML_NAME_REVISION ) )
+      {
+         QString date   = "";
+         QString msg    = "";
+         QString author = "";
+         QDomElement e    = entry.toElement();
+         QString revision = e.attribute( XML_NAME_REVISION, "" );
+
+         QDomNodeList content = entry.childNodes();
+         for( int j=0; j < content.size(); j++ )
+         {
+            QString name = content.item( j ).nodeName();
+            QString value  = content.item( j ).toElement().text();
+            if( name == XML_NAME_DATE )
+               date = value;
+            else if( name == XML_NAME_MSG )
+               msg = value;
+            else if( name == XML_NAME_AUTHOR )
+               author = value;
+         }
+         log_list.append( SVN_Log( revision, author, msg, date ) );
+      }
+   }
+
+
+   if( !is_range == true || to == std::numeric_limits< quint64 >::max( ) )
+      ui.to_revision_LE->setText( "HEAD" );
+   ui.from_revision_LE->setText( log_list[ log_list.size()-1].revision  );
    return true;
+
 }
 
 
-void Log_Dialog::update_table( void )
+void Log_Dialog::update_table( bool clear )
 {
-   int table_entries = ui.log_TW->rowCount();
-   int log_entries   = log_list.size();
-   int delta         = log_entries - table_entries;
-   int start         = log_entries - delta;
+   int table_entries;
+   int log_entries;
 
-   ui.log_TW->setRowCount( ui.log_TW->rowCount() + delta );
+   if( clear )
+   {
+      ui.log_TW->clear();
+      table_entries = 0;
+   }
+   else
+      table_entries = ui.log_TW->rowCount();
+
+   log_entries   = log_list.size();
+   int delta     = log_entries - table_entries;
+   int start     = log_entries - delta;
+
+   ui.log_TW->setRowCount( table_entries + delta );
    for( int i=0; i < delta; i++ )
    {
-      SVN_Log l = log_list[ i ];
+      SVN_Log l = log_list[ table_entries + i ];
       ui.log_TW->setItem( i + start, 0, new QTableWidgetItem( l.revision ) );
       ui.log_TW->setItem( i + start, 1, new QTableWidgetItem( l.author   ) );
       ui.log_TW->setItem( i + start, 2, new QTableWidgetItem( l.message  ) );
@@ -210,9 +259,56 @@ QVariant Log_Dialog::get_revision( void )
 }
 
 
-void Log_Dialog::on_load_more_PB_clicked( void )
+void Log_Dialog::on_next_PB_clicked( void )
 {
-   qDebug() << "should load more";
+   bool result;
+
+   if( log_list.size() == 0 )
+   {
+      result = load_svn_log();
+   }
+   else
+   {
+      quint64 to;
+      quint64 from;
+      to = log_list[ log_list.size()-1].revision.toInt()-1;
+
+      if( to <= 0 )
+         return;
+
+      if( to < (SVN_N_LOAD-1) )
+         from = 0;
+      else
+         from = to-SVN_N_LOAD+1;
+
+      result = load_svn_log( to, from, true, true );
+   }
+   if( result )
+      update_table();
+}
+
+
+void Log_Dialog::on_load_PB_clicked( void )
+{
+   bool result;
+   quint64 to;
+   quint64 from;
+   QString to_input   = ui.to_revision_LE->text();
+   QString from_input = ui.from_revision_LE->text();
+
+   if( to_input.toLower() == QString( "head" ) )
+   {
+      to   = std::numeric_limits< quint64 >::max();
+      from = from_input.toInt();
+   }
+   else
+   {
+      to   = to_input.toInt();
+      from = from_input.toInt();
+   }
+   result = load_svn_log( to, from, true, false );
+   if( result )
+      update_table( true );
 }
 
 

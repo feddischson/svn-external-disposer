@@ -82,14 +82,16 @@ private:
    //         adds SVN_Log entries into log_list.
    /// 
    bool load_svn_log(
-         quint64 from = std::numeric_limits< quint64 >::max(),
-         quint64 n = 10 );
+         quint64 to        = std::numeric_limits< quint64 >::max(),
+         quint64 n_or_from = SVN_N_LOAD,
+         bool    is_range  = false,
+         bool    append    = true );
 
 
    /// @brief Checks if there are new entries in the log-list.
    ///         If there are new entries, they are added to the table widget.
    ///
-   void update_table( void );
+   void update_table( bool clear = false );
 
 
    /// @brief Log entry containing all necessary elements of a log entry.
@@ -137,8 +139,11 @@ private:
 
 private slots:
 
-   /// @brief Handler for the More push button.
-   void on_load_more_PB_clicked( void );
+   /// @brief Handler for the next_PB push button.
+   void on_next_PB_clicked( void );
+
+   /// @brief Handler for the load_PB push button.
+   void on_load_PB_clicked( void );
 
 
 }; // class Log_Dialog

@@ -68,7 +68,12 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString SVN_ERR_AUTH      = "E215004";
    static const QString SVN_USER          = "--username";
    static const QString SVN_PASS          = "--password";
+   static const QString SVN_REVISION      = "-r";
    /// @}
+
+   /// @brief Number of svn log entries 
+   //         which are initially and by pressing the next button loaded.
+   static const int SVN_N_LOAD            = 200;
 
    /// @brief Number of authentication trials
    static const int SVN_MAX_AUTH_TRIALS = 3;
