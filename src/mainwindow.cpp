@@ -97,6 +97,7 @@ void Main_Window::load_settings( void )
    working_cp_path = settings.value( SET_CP_PATH, "" ).toString();
    ui.working_copy_path_LE->setText( working_cp_path );
    select_state = settings.value( SET_SELECT, 0 ).toInt();
+   restoreGeometry(settings.value( SET_WINDOW_SIZE ).toByteArray());
    update_tree();
 }
 
@@ -140,7 +141,7 @@ void Main_Window::save_settings( void )
    QSettings settings;
    settings.setValue( SET_CP_PATH, working_cp_path );
    settings.setValue( SET_SELECT, select_state );
-
+   settings.setValue( SET_WINDOW_SIZE, saveGeometry() );
    // we only save the column settings, if we have a valid
    // model loaded
    if( data_model != nullptr )

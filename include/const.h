@@ -97,6 +97,7 @@ namespace SVN_EXTERNALS_DISPOSER
    static const QString SET_LASTNAME      = "lastname";
    static const QString SET_USERNAME      = "username";
    static const QString SET_SELECT        = "select_state";
+   static const QString SET_WINDOW_SIZE   = "mainwindow_size";
    /// @}
 
 
