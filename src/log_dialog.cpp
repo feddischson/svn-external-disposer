@@ -50,6 +50,14 @@ Log_Dialog::Log_Dialog(
            << GUI_HEAD_DATE;
    ui.log_TW->setHorizontalHeaderLabels( headers );
 
+
+   connect( 
+         ui.log_TW, 
+         SIGNAL( itemSelectionChanged() ),
+         this,
+         SLOT( selection_changed() ) ) ;
+
+
    setWindowTitle( working_cp_path );
    QHeaderView * view = ui.log_TW->horizontalHeader();
    view->setSectionResizeMode(QHeaderView::Stretch);
@@ -241,7 +249,7 @@ void Log_Dialog::update_table( bool clear )
       SVN_Log l = log_list[ table_entries + i ];
       ui.log_TW->setItem( i + start, 0, new QTableWidgetItem( l.revision ) );
       ui.log_TW->setItem( i + start, 1, new QTableWidgetItem( l.author   ) );
-      ui.log_TW->setItem( i + start, 2, new QTableWidgetItem( l.message  ) );
+      ui.log_TW->setItem( i + start, 2, new QTableWidgetItem( short_message( l ) ) );
       ui.log_TW->setItem( i + start, 3, new QTableWidgetItem( l.date     ) );
    }
 
@@ -252,11 +260,24 @@ void Log_Dialog::update_table( bool clear )
 
 }
 
+QString Log_Dialog::short_message( const SVN_Log & log ) const
+{
+   return log.message.split("\n")[0];
+}
 
 QVariant Log_Dialog::get_revision( void )
 {
    auto l = ui.log_TW->selectionModel()->selectedRows( 0 );
    return l[0].data();
+}
+
+void Log_Dialog::selection_changed( void )
+{
+   auto l = ui.log_TW->selectionModel()->selectedRows( 0 );
+   if( l.size() == 0 )
+      return;
+   else
+      ui.message_TE->setText( log_list[ l[0].row() ].message );
 }
 
 

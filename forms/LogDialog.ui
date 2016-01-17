@@ -7,17 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>459</width>
-    <height>321</height>
+    <height>457</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Revision-Log Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
-    <widget class="QTableWidget" name="log_TW"/>
-   </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Load Revisions</string>
@@ -60,7 +57,10 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="0" column="0">
+    <widget class="QTableWidget" name="log_TW"/>
+   </item>
+   <item row="3" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -69,6 +69,9 @@
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QTextEdit" name="message_TE"/>
    </item>
   </layout>
  </widget>

@@ -139,7 +139,16 @@ private:
 
    /// @brief To remember the last selected revision.
    QString last_selected_revision;
+
+   /// @brief Returns the first line of the log message of @p log.
+   QString short_message( const SVN_Log & log ) const;
+
+
 private slots:
+
+
+   /// @brief Handler or the case, where a new row is selected
+   void selection_changed( void );
 
    /// @brief Handler for the next_PB push button.
    void on_next_PB_clicked( void );
