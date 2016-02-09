@@ -199,7 +199,7 @@ private:
 
    /// @brief  Calls 'svn propget svn:externals ...' via QProcess 
    ///         and extracts the data from the XML output.
-   bool read_externals( 
+   QList< QString > read_externals( 
       const QString & path );
 
 
@@ -207,7 +207,7 @@ private:
    /// @brief  Extracts svn:externals entries from a set of svn:externals (the whole property),
    ///         and calles parse_external to extract the svn:externals information.
    ///         The result is stored in external_map.
-   void extract_externals( 
+   QList< QString > extract_externals( 
       const QString       & path,
       const QString       & property );
 

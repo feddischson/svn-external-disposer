@@ -272,20 +272,16 @@ void Data_Model::setup_model_data(
    QDir dir( path ); 
 
    // read the external property of 'path'
-   if( !read_externals( path ) )
-      qDebug() << "Failed to read svn:externals property";
-
-   // get all directories without . and ..
-   QFileInfoList files = dir.entryInfoList( QDir::Dirs | QDir::NoDotAndDotDot );
+   auto files = read_externals( path );
 
    // loop over all entries 
-   foreach(const QFileInfo &file, files) 
+   foreach(const auto &file, files) 
    {
-      QString child_path = file.absoluteFilePath();  
+      QDir child_path( file );  
 
-      if( file.isDir() ) 
+      if( child_path.exists() ) 
          // recursive call to add all sub-paths
-         setup_model_data( child_path );
+         setup_model_data( child_path.absolutePath() );
    }
 }
 
@@ -338,7 +334,7 @@ bool Data_Model::save_externals( void )
 }
 
 
-bool Data_Model::read_externals( 
+QList<QString> Data_Model::read_externals( 
       const QString & path )
 {
 
@@ -348,10 +344,12 @@ bool Data_Model::read_externals(
          << SVN_PROPGET
          << SVN_EXTERNALS
          << SVN_XML
-         << SVN_DEPTH
-         << SVN_FILES
+         << SVN_RECURSIVE     
          << path );
 
+
+   // The resulting list for the recursive call
+   QList< QString > result;
 
    // wait until the process is done
    // and check the result
@@ -362,7 +360,11 @@ bool Data_Model::read_externals(
       // Parse the XML result
       QDomDocument doc;
       if ( !doc.setContent( process.readAllStandardOutput() ) )
-         return false;
+      {
+         qDebug() << "Failed to read svn:externals property";
+         return result;
+      }
+
       QDomNodeList targets = doc.elementsByTagName( XML_NAME_TARGET );
 
       // and iterate over all svn:externals properties.
@@ -380,21 +382,22 @@ bool Data_Model::read_externals(
             QString     path = e.attribute( XML_NAME_PATH, "" );
             QString     prop = value.text();
 
-            extract_externals( path, prop );
+            auto tmp = extract_externals( path, prop );
+            result += tmp;
          }
       }
    }
-   else
-      return false;
-
-   return true;
+   return result;
 }
 
 
-void Data_Model::extract_externals( 
+QList< QString > Data_Model::extract_externals( 
       const QString       & path,
       const QString       & property )
 {
+
+   // The resulting list for the recursive call
+   QList< QString > result;
 
    foreach (
          const QString &str, 
@@ -408,11 +411,14 @@ void Data_Model::extract_externals(
 
       QDir local_dir( external->local_path.toString() );
 
+
       // try it as an absolute path
       if( QDir( external->local_path.toString() ).exists() )
       {
-         external_map.insert( external->local_path.toString(), external );
+         QString tmp_path = external->local_path.toString();
+         external_map.insert( tmp_path, external );
          property_map.insertMulti( path, external );
+         result.append( tmp_path );
       }
       else 
       // try it as a relative path
@@ -423,13 +429,13 @@ void Data_Model::extract_externals(
          {
             external_map.insert( abs_path, external );
             property_map.insertMulti( path, external );
+            result.append( abs_path );
          }
          else
             qDebug() << "cannot find " << external->local_path.toString() << "in " << path;
       }
-
-
    }
+   return result;
 }
 
 
