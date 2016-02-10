@@ -25,6 +25,7 @@
 #include <QProcess>
 #include <QDomDocument>
 #include <QBrush>
+#include <QMessageBox>
 
 #include "const.h"
 #include "data_model.h"
@@ -432,7 +433,16 @@ QList< QString > Data_Model::extract_externals(
             result.append( abs_path );
          }
          else
-            qDebug() << "cannot find " << external->local_path.toString() << "in " << path;
+         {
+            QMessageBox * m = new QMessageBox( );
+            m->setDetailedText(  "Can not find " + 
+                              external->local_path.toString() +
+                              " in " + 
+                              path    + 
+                              ".\nPlease run svn update." );
+            m->setText( "Missing folder!" );
+            m->exec();
+         }
       }
    }
    return result;
