@@ -414,7 +414,8 @@ QList< QString > Data_Model::extract_externals(
 
 
       // try it as an absolute path
-      if( QDir( external->local_path.toString() ).exists() )
+      if(    QDir( external->local_path.toString() ).exists() 
+          || QFile(external->local_path.toString() ).exists() )
       {
          QString tmp_path = external->local_path.toString();
          external_map.insert( tmp_path, external );
@@ -425,8 +426,8 @@ QList< QString > Data_Model::extract_externals(
       // try it as a relative path
       {
          QString abs_path = QDir( path ).filePath( external->local_path.toString() );
-         QDir abs_dir( abs_path );
-         if( abs_dir.exists() )
+         if(    QDir ( abs_path ).exists() 
+             || QFile( abs_path ).exists() )
          {
             external_map.insert( abs_path, external );
             property_map.insertMulti( path, external );
