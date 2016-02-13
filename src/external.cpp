@@ -18,6 +18,8 @@
 // Public License along with this program; if not, see 
 // <http://www.gnu.org/licenses/>. 
 //
+#include <QDir>
+
 #include "external.h"
 #include "const.h"
 
@@ -51,7 +53,7 @@ External::External( const QString & prop_entry, const QString & path )
    pos = External::old_external_matcher.indexIn( prop_entry );
    if( pos > -1 )
    {
-      local_path         = old_external_matcher.cap(1), // local path
+      local_path         = QDir::cleanPath( old_external_matcher.cap(1)), // local path
       url                = old_external_matcher.cap(4), // url
       peg_revision       = QString(""),                 // peg-revision
       operative_revision = old_external_matcher.cap(3), // operative-revision
@@ -63,7 +65,7 @@ External::External( const QString & prop_entry, const QString & path )
       pos = External::external_matcher.indexIn( prop_entry );
       if( pos > -1 )
       {
-         local_path         = external_matcher.cap(6), // local path
+         local_path         = QDir::cleanPath( external_matcher.cap(6) ), // local path
          url                = external_matcher.cap(3), // url
          peg_revision       = external_matcher.cap(5), // peg
          operative_revision = external_matcher.cap(2), // operative

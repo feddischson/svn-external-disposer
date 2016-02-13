@@ -380,7 +380,7 @@ QList<QString> Data_Model::read_externals(
               target.attributes().contains( XML_NAME_PATH ) )
          {
             QDomElement e    = target.toElement();
-            QString     path = e.attribute( XML_NAME_PATH, "" );
+            QString     path = QDir::cleanPath( e.attribute( XML_NAME_PATH, "" ) );
             QString     prop = value.text();
 
             auto tmp = extract_externals( path, prop );
