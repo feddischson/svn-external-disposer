@@ -84,6 +84,14 @@ qmake test.pro
 Version log
 =================
 
+
+v1.0.1
+-------
+  - Adds performance improvments
+  - Supports svn:external files
+  - Cleans paths ( e.g. some/./path is converted to some/path )
+  - Prints a message when an external is defined without an existing folder (e.g. svn update was not done)
+
 v1.0.0
 --------
 This version can be found [here][v1.0.0]:
@@ -96,8 +104,6 @@ This version can be found [here][v1.0.0]:
   - Allows to save changes
   - A windows build can be downloaded from [here][win32_v1.0.0].
   - The sources code can be downloaded as zip from [here][source_v1.0.0].
-
-
 
 
 License
