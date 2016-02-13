@@ -20,9 +20,15 @@ DEFINES += TESTING
 
 HEADERS     += include/const.h
 HEADERS     += include/external.h
+HEADERS     += include/data_model.h
+HEADERS     += include/external_command.h
 HEADERS     += test/test_external.h
+HEADERS     += test/test_data_model.h
 SOURCES     += src/external.cpp
+SOURCES     += src/data_model.cpp
+SOURCES     += src/external_command.cpp
 SOURCES     += test/test_external.cpp
+SOURCES     += test/test_data_model.cpp
 SOURCES     += test/main.cpp
 
 VERSION = "0.1.0"

@@ -21,9 +21,21 @@
 //
 
 #include <QTest>
-
+#include <QApplication>
 #include "test_external.h"
+#include "test_data_model.h"
 
 using namespace SVN_EXTERNALS_DISPOSER;
 
-QTEST_MAIN( Test_External );
+
+int main( int argc, char * argv [] )
+{
+   QApplication app(argc, argv);
+   int status = 0;
+   auto EXEC_TEST = [&status, argc, argv](QObject* obj) {
+     status |= QTest::qExec(obj, argc, argv);
+     delete obj;
+   };
+   EXEC_TEST( new Test_External( ) );
+   EXEC_TEST( new Test_Data_Model( "/home/christian/Development/qt/svn-externals-disposer/test/test_tree" ) );
+}
