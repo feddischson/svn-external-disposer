@@ -94,6 +94,8 @@ using T_SP_External = QSharedPointer< External >;
 
 /// @defgroup external_comp Comparison Operators
 /// @{
+bool operator== ( const      External & e1, const      External & e2 );
+bool operator!= ( const      External & e1, const      External & e2 );
 bool operator== ( const T_SP_External & e1, const T_SP_External & e2 );
 bool operator!= ( const T_SP_External & e1, const T_SP_External & e2 );
 /// @}
