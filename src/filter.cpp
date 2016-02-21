@@ -44,10 +44,13 @@ Filter::operator QString()
 }
 
 bool Filter::filterAcceptsRow(int source_row,
-        const QModelIndex &) const
+        const QModelIndex & parentIndex ) const
 {
    if( this->show_only_externals  == true )
    {
+      qDebug() << source_row;
+      if( parentIndex.isValid() )
+         qDebug() << parentIndex;
       // @todo add real implementation here
       return ( source_row%2 == 0 ); 
    }

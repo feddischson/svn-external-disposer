@@ -398,13 +398,13 @@ void Main_Window::open_context_menu(const QPoint &point)
 
 
    if(  ( index.column() == 6 || index.column() == 7 ) 
-       && data_model->is_external( index )
+       && data_model->is_external( proxy_filter->mapToSource( index ) )
       )
    {
       last_context_index = index;
       revision_menu->exec( externals_TV->mapToGlobal(point));
    }
-   else if( data_model->is_directory( index ) )
+   else if( data_model->is_directory( proxy_filter->mapToSource( index ) ) )
    {
       last_context_index = index;
       context_menu->exec( externals_TV->mapToGlobal(point));
@@ -419,15 +419,17 @@ void Main_Window::open_header_menu(const QPoint & point )
 
 void Main_Window::browse_rev( void )
 {
-   if( data_model != nullptr )
+   if( data_model   != nullptr && 
+       proxy_filter != nullptr )
    {
-      QString path = data_model->filePath( last_context_index );
+      QModelIndex index = proxy_filter->mapToSource( last_context_index );
+      QString path = data_model->filePath( index );
       Log_Dialog *d = new Log_Dialog( path, this );
       if( d->load() )
       {
 
 
-         auto current_revision = data_model->data( last_context_index, Qt::DisplayRole ).toString();
+         auto current_revision = data_model->data( index, Qt::DisplayRole ).toString();
          if( current_revision.length() > 0 )
             d->select_revision( current_revision );
 
@@ -435,7 +437,7 @@ void Main_Window::browse_rev( void )
 
          if( d->result() )
          {
-            data_model->setData( last_context_index, d->get_revision(), Qt::EditRole  );
+            data_model->setData( index, d->get_revision(), Qt::EditRole  );
          }
       }
       else
@@ -454,7 +456,8 @@ void Main_Window::edit_externals( void )
    if( data_model == nullptr )
       return;
 
-   QString path = data_model->filePath( last_context_index );
+   QString path = data_model->filePath(
+         proxy_filter->mapToSource( last_context_index ) );
 
    // note: we don't set the parent widget and
    // delete the dialog manually
