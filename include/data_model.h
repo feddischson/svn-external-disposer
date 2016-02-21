@@ -217,6 +217,10 @@ private:
    /// @brief Returns true, if child is below parent
    bool  abs_path_contains( const QString & parent, const QString & child );
 
+
+   /// @brief Refreshes the row of a given path via emit dataChanged().
+   void refresh_path( const QString & path );
+
    /// @brief  List for our header extension
    QList< QVariant > header;
 

@@ -207,11 +207,16 @@ void Data_Model::change_external(
                   new_value,
                   old_value ) );
       }
-
-      emit( layoutChanged() );
+      refresh_path( path );
    }
 }
 
+void Data_Model::refresh_path( const QString & path )
+{
+   auto index = QFileSystemModel::index( path, 0 );
+   emit( dataChanged( index, 
+         QFileSystemModel::index( path , columnCount( index )-1 ) ) );
+}
 
 bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int role)
 {
@@ -225,7 +230,8 @@ bool Data_Model::setData(const QModelIndex & index, const QVariant & value, int 
          change_external( 
                path, 
                value,
-               column );
+               column
+               );
 
          return true;
       }
@@ -495,10 +501,9 @@ void Data_Model::restore( void )
              &external_map,
              &property_map );
 
-   // clear the undo stack
-   // TODO: this is not nice, but required to have consistent data
-   undo_stack.clear();
-   emit( layoutChanged() );
+   // go through all externals and refresh them
+   foreach(const auto & path, external_map.keys() )
+      refresh_path( path );
 }
 
 bool Data_Model::is_external( const QModelIndex & i )

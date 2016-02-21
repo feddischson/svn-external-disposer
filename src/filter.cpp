@@ -60,7 +60,9 @@ bool Filter::filterAcceptsRow(int source_row,
                   m->index( source_row, 0, parentIndex ) );
          }
          catch (std::bad_cast& bc)
+         {
             return true;
+         }
       }
       else
          return true;

@@ -33,12 +33,12 @@ External_Command::External_Command(
       const QVariant     & new_value,
       const QVariant     & old_value,
       QUndoCommand *parent )
-   : QUndoCommand ( parent     ),
-     data_model   ( data_model ),
-     path         ( path       ),
-     index        ( index      ),
-     new_value    ( new_value  ),
-     old_value    ( old_value  ),
+   : QUndoCommand ( parent       ),
+     data_model   ( data_model   ),
+     path         ( path         ),
+     index        ( index        ),
+     new_value    ( new_value    ),
+     old_value    ( old_value    ),
      called_once  ( false )
 {
 }

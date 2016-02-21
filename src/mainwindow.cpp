@@ -298,14 +298,6 @@ void Main_Window::setup_header_actions( void )
                   externals_TV->setColumnHidden( i, false );
 
                   load_column_settings();
-               // // read the column with from the settings
-               // int size = settings.beginReadArray( SET_COLUMN );
-               // if( i < size )
-               // {
-               //    settings.setArrayIndex( i );
-               //    externals_TV->setColumnWidth( i, settings.value( SET_COLUMN_W, 100 ).toInt() );
-               // }
-               // settings.endArray();
                }
                else
                {
