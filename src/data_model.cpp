@@ -569,6 +569,38 @@ void Data_Model::set_undo_index( int index )
 }
 
 
+bool Data_Model::is_external_related( const QModelIndex & index )
+{
+   QString path  = QFileSystemModel::filePath( index );
+   QString rpath = rootPath();
+
+
+   // if the path is above the root-path, return true
+   if( abs_path_contains( path, rpath ) )
+      return true;
+   else
+   {
+      // search if the path is above an external
+      foreach(const auto &epath, external_map.keys() )
+      {
+         if( abs_path_contains( path, epath ) )
+            return true;
+      }
+   }
+   return false;
+}
+
+/// @brief Returns true, if child is below parent
+bool  Data_Model::abs_path_contains( const QString & parent, const QString & child )
+{
+   if( parent.size() > child.size() )
+      return false;
+
+   QStringRef beginning( &child, 0, parent.size() );
+   return (beginning == parent );
+}
+
+
 }; // namespace SVN_EXTERNALS_DISPOSER
 
 // vim: filetype=cpp et ts=3 sw=3 sts=3

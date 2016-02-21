@@ -19,7 +19,9 @@
 // <http://www.gnu.org/licenses/>. 
 //
 #include <QDebug>
+#include <typeinfo>
 
+#include "data_model.h"
 #include "filter.h"
 
 namespace SVN_EXTERNALS_DISPOSER
@@ -48,11 +50,20 @@ bool Filter::filterAcceptsRow(int source_row,
 {
    if( this->show_only_externals  == true )
    {
-      qDebug() << source_row;
       if( parentIndex.isValid() )
-         qDebug() << parentIndex;
-      // @todo add real implementation here
-      return ( source_row%2 == 0 ); 
+      {
+         try{
+
+            Data_Model * m = dynamic_cast< Data_Model *>( sourceModel() );
+            // @todo add real implementation here
+            return m->is_external_related( 
+                  m->index( source_row, 0, parentIndex ) );
+         }
+         catch (std::bad_cast& bc)
+            return true;
+      }
+      else
+         return true;
    }
    else
       return true;

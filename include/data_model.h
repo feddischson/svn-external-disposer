@@ -129,6 +129,9 @@ public:
    /// @brief Returns true if the index is a directory
    bool is_directory( const QModelIndex & i );
 
+   /// @brief Returns true of the index is an external or is a parent of an external.
+   bool is_external_related( const QModelIndex & i );
+
 
    /// @brief  Returns a list of strings where each is a target path of an external.
    QList< QString > get_externals_targets( const QString path );
@@ -211,6 +214,8 @@ private:
       const QString       & path,
       const QString       & property );
 
+   /// @brief Returns true, if child is below parent
+   bool  abs_path_contains( const QString & parent, const QString & child );
 
    /// @brief  List for our header extension
    QList< QVariant > header;
