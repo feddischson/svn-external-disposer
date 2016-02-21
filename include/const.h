@@ -120,15 +120,16 @@ Public License along with this program; if not, see         \n\
    /// @defgroup set_const  QSetting string constants
    /// Used to load/store QSettings.
    /// @{
-   static const QString SET_FILE          = "/settings.ini";
-   static const QString SET_CP_PATH       = "working_cp_path";
-   static const QString SET_COLUMN        = "column_width";
-   static const QString SET_COLUMN_W      = "column_width_val";
-   static const QString SET_USERNAMES     = "usernames";
-   static const QString SET_LASTNAME      = "lastname";
-   static const QString SET_USERNAME      = "username";
-   static const QString SET_SELECT        = "select_state";
-   static const QString SET_WINDOW_SIZE   = "mainwindow_size";
+   static const QString SET_FILE            = "/settings.ini";
+   static const QString SET_CP_PATH         = "working_cp_path";
+   static const QString SET_COLUMN          = "column_width";
+   static const QString SET_COLUMN_W        = "column_width_val";
+   static const QString SET_USERNAMES       = "usernames";
+   static const QString SET_LASTNAME        = "lastname";
+   static const QString SET_USERNAME        = "username";
+   static const QString SET_SELECT          = "select_state";
+   static const QString SET_WINDOW_SIZE     = "mainwindow_size";
+   static const QString SET_EXTERNAL_FILTER = "external_filter";
    /// @}
 
 

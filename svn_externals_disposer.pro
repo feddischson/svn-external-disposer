@@ -26,6 +26,7 @@ HEADERS     += include/external_command.h
 HEADERS     += include/log_dialog.h
 HEADERS     += include/login_dialog.h
 HEADERS     += include/externals_dialog.h
+HEADERS     += include/filter.h
 SOURCES     += src/main.cpp
 SOURCES     += src/mainwindow.cpp
 SOURCES     += src/data_model.cpp
@@ -35,6 +36,7 @@ SOURCES     += src/external_command.cpp
 SOURCES     += src/log_dialog.cpp
 SOURCES     += src/login_dialog.cpp
 SOURCES     += src/externals_dialog.cpp
+SOURCES     += src/filter.cpp
 
 VERSION = "1.0.1"
 DEFINES += _APP_VERSION=\\\"$$VERSION\\\"

@@ -30,6 +30,7 @@
 #include "ui_MainWindow.h"
 #include "data_model.h"
 #include "externals_dialog.h"
+#include "filter.h"
 
 namespace SVN_EXTERNALS_DISPOSER
 {
@@ -77,6 +78,8 @@ private:
    // the external model reflecting our tree of data.
    Data_Model *data_model;
 
+   /// @brief 
+   Filter *proxy_filter;
 
    /// @brief UI instance, created from forms/MainWindow.ui.
    Ui::Main_Window ui;
@@ -210,6 +213,8 @@ private slots:
    /// @brief
    void open_header_menu(const QPoint &point);
 
+   /// @brief
+   void on_only_externals_CB_stateChanged( int state );
 
 }; // class Main_Window
 

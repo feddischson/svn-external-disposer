@@ -39,6 +39,7 @@ Main_Window::Main_Window(
       QWidget *parent    ) 
    : QMainWindow( parent ),
      data_model( nullptr ),
+     proxy_filter( nullptr ),
      working_cp_path( path ),
      expanded( false ),
      select_state( 0 ),
@@ -109,6 +110,7 @@ void Main_Window::load_settings( void )
       working_cp_path = settings.value( SET_CP_PATH, "" ).toString();
    ui.working_copy_path_LE->setText( working_cp_path );
    select_state = settings.value( SET_SELECT, 0 ).toInt();
+   ui.only_externals_CB->setChecked( settings.value( SET_EXTERNAL_FILTER, false ).toBool() );
    restoreGeometry(settings.value( SET_WINDOW_SIZE ).toByteArray());
    update_tree();
 }
@@ -154,6 +156,9 @@ void Main_Window::save_settings( void )
    settings.setValue( SET_CP_PATH, working_cp_path );
    settings.setValue( SET_SELECT, select_state );
    settings.setValue( SET_WINDOW_SIZE, saveGeometry() );
+
+   settings.setValue( SET_EXTERNAL_FILTER, ui.only_externals_CB->isChecked() );
+
    // we only save the column settings, if we have a valid
    // model loaded
    if( data_model != nullptr )
@@ -220,9 +225,18 @@ void Main_Window::update_tree( void )
        process.exitCode() == 0 ) // wait 3 seconds
    {
       data_model = new Data_Model( );
+
+      proxy_filter = new Filter(this);
+      proxy_filter->set_filter_externals( ui.only_externals_CB->isChecked() );
+      proxy_filter->setSourceModel( data_model );
+
+
+
+      externals_TV->setModel( proxy_filter );
+      qDebug() << "set root path: " << working_cp_path;
       data_model->setRootPath( working_cp_path );
-      externals_TV->setModel( data_model );
-      externals_TV->setRootIndex( data_model->index( working_cp_path ) );
+      externals_TV->setRootIndex( proxy_filter->mapFromSource( data_model->index( working_cp_path )  ));
+
 
       undo_action = data_model->create_undo_action( this, tr("&Undo" ) );
       undo_action->setShortcuts(QKeySequence::Undo);
@@ -501,6 +515,18 @@ bool Main_Window::eventFilter( QObject *obj, QEvent * e )
 
    return false;
 }
+
+
+void Main_Window::on_only_externals_CB_stateChanged( int state )
+{
+   if( proxy_filter )
+   {
+      proxy_filter->set_filter_externals( state == 2 );
+      // this is required in order to refresh the tree-view
+      proxy_filter->setFilterRegExp( QString("") );
+   }
+}
+
 
 }; // namespace SVN_EXTERNALS_DISPOSER
 
