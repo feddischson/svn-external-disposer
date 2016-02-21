@@ -106,13 +106,14 @@ void Main_Window::del_external_model( void )
 void Main_Window::load_settings( void )
 {
    QSettings settings;
-   if( working_cp_path.size() == 0 )
-      working_cp_path = settings.value( SET_CP_PATH, "" ).toString();
-   ui.working_copy_path_LE->setText( working_cp_path );
    select_state = settings.value( SET_SELECT, 0 ).toInt();
    ui.only_externals_CB->setChecked( settings.value( SET_EXTERNAL_FILTER, false ).toBool() );
    restoreGeometry(settings.value( SET_WINDOW_SIZE ).toByteArray());
-   update_tree();
+   if( working_cp_path.size() == 0 )
+      working_cp_path = settings.value( SET_CP_PATH, "" ).toString();
+
+   // this causes that update_tree is called.
+   ui.working_copy_path_LE->setText( working_cp_path );
 }
 
 
@@ -233,7 +234,6 @@ void Main_Window::update_tree( void )
 
 
       externals_TV->setModel( proxy_filter );
-      qDebug() << "set root path: " << working_cp_path;
       data_model->setRootPath( working_cp_path );
       externals_TV->setRootIndex( proxy_filter->mapFromSource( data_model->index( working_cp_path )  ));
 
