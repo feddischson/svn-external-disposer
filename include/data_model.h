@@ -171,6 +171,9 @@ public:
    bool is_external_modified( const QString & path ) const;
 
 
+   /// @brief Returns true if a given path is a parent of the root path.
+   bool is_above_root_path( const QString & path );
+
 private:
 
 
@@ -216,7 +219,6 @@ private:
 
    /// @brief Returns true, if child is below parent
    bool  abs_path_contains( const QString & parent, const QString & child );
-
 
    /// @brief Refreshes the row of a given path via emit dataChanged().
    void refresh_path( const QString & path );

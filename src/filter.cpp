@@ -48,24 +48,24 @@ Filter::operator QString()
 bool Filter::filterAcceptsRow(int source_row,
         const QModelIndex & parentIndex ) const
 {
+   // get the model and index if required
    if( this->show_only_externals  == true )
    {
-      if( parentIndex.isValid() )
-      {
-         try{
+      try{
+         auto m = dynamic_cast< Data_Model *>( sourceModel() );
+         auto index = m->index( source_row, 0, parentIndex );
 
-            Data_Model * m = dynamic_cast< Data_Model *>( sourceModel() );
-            // @todo add real implementation here
-            return m->is_external_related( 
-                  m->index( source_row, 0, parentIndex ) );
-         }
-         catch (std::bad_cast& bc)
-         {
+         // for indices above the root-path, no filtering is appied
+         auto path = m->filePath( index );
+         if( m->is_above_root_path( path  ) )
             return true;
-         }
+         else
+            return m->is_external_related( index );
       }
-      else
+      catch (std::bad_cast& bc)
+      {
          return true;
+      }
    }
    else
       return true;

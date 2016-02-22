@@ -606,6 +606,13 @@ bool  Data_Model::abs_path_contains( const QString & parent, const QString & chi
 }
 
 
+bool Data_Model::is_above_root_path( const QString & path )
+{
+   QString rpath = rootPath();
+   return abs_path_contains( path, rpath );
+}
+
+
 }; // namespace SVN_EXTERNALS_DISPOSER
 
 // vim: filetype=cpp et ts=3 sw=3 sts=3
