@@ -38,7 +38,7 @@ SOURCES     += src/login_dialog.cpp
 SOURCES     += src/externals_dialog.cpp
 SOURCES     += src/filter.cpp
 
-VERSION = "1.0.1"
+VERSION = "1.1.0"
 DEFINES += _APP_VERSION=\\\"$$VERSION\\\"
 
 target.path = /usr/local/bin

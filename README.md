@@ -84,6 +84,18 @@ qmake test.pro
 Version log
 =================
 
+v1.1.0
+-------
+This version can be found [here][v1.1.0]:
+
+  - Adds performance improvments
+  - Supports svn:external files
+  - Cleans paths ( e.g. some/./path is converted to some/path )
+  - Prints a message when an external is defined without an existing folder (e.g. svn update was not done)
+  - A windows build can be downloaded from [here][win32_v1.1.0].
+  - The sources code can be downloaded as zip from [here][source_v1.1.0].
+
+
 
 v1.0.1
 -------
@@ -93,8 +105,10 @@ This version can be found [here][v1.0.1]:
   - Supports svn:external files
   - Cleans paths ( e.g. some/./path is converted to some/path )
   - Prints a message when an external is defined without an existing folder (e.g. svn update was not done)
-  - A windows build can be downloaded from [here][win32_v1.0.0].
-  - The sources code can be downloaded as zip from [here][source_v1.0.0].
+  - A windows build can be downloaded from [here][win32_v1.0.1].
+  - The sources code can be downloaded as zip from [here][source_v1.0.1].
+
+
 
 v1.0.0
 --------
@@ -133,12 +147,21 @@ Public License along with this program; if not, see
 <http://www.gnu.org/licenses/>. 
 ```
 
+
+
+[v1.1.0]: https://github.com/feddischson/svn-externals-disposer/releases/tag/v1.1.0
+[win32_v1.1.0]: https://github.com/feddischson/svn-externals-disposer/releases/download/v1.1.0/svn_externals_disposer_v1.1.0_win32.zip
+[source_v1.1.0]: https://github.com/feddischson/svn-externals-disposer/archive/v1.1.0.zip
+
+
+[v1.0.1]: https://github.com/feddischson/svn-externals-disposer/releases/tag/v1.0.1
+[win32_v1.0.1]: https://github.com/feddischson/svn-externals-disposer/releases/download/v1.0.1/svn_externals_disposer_v1.0.1_win32.zip
+[source_v1.0.1]: https://github.com/feddischson/svn-externals-disposer/archive/v1.0.1.zip
+
+
 [v1.0.0]: https://github.com/feddischson/svn-externals-disposer/releases/tag/v1.0.0
 [win32_v1.0.0]: https://github.com/feddischson/svn-externals-disposer/releases/download/v1.0.0/svn_externals_disposer_v1.0.0_win32.zip
 [source_v1.0.0]: https://github.com/feddischson/svn-externals-disposer/archive/v1.0.0.zip
 
 
-[v1.0.1]: https://github.com/feddischson/svn-externals-disposer/releases/tag/v1.0.1
-[win32_v1.0.1]: https://github.com/feddischson/svn-externals-disposer/releases/download/v1.0.0/svn_externals_disposer_v1.0.1_win32.zip
-[source_v1.0.1]: https://github.com/feddischson/svn-externals-disposer/archive/v1.0.1.zip
 

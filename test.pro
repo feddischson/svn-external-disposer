@@ -31,6 +31,6 @@ SOURCES     += test/test_external.cpp
 SOURCES     += test/test_data_model.cpp
 SOURCES     += test/main.cpp
 
-VERSION = "1.0.1"
+VERSION = "1.1.0"
 DEFINES += _APP_VERSION=\\\"$$VERSION\\\"
 
