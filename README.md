@@ -89,9 +89,7 @@ v1.1.0
 This version can be found [here][v1.1.0]:
 
   - Adds performance improvments
-  - Supports svn:external files
-  - Cleans paths ( e.g. some/./path is converted to some/path )
-  - Prints a message when an external is defined without an existing folder (e.g. svn update was not done)
+  - Adds a filter functionality to show only external-related files/folders.
   - A windows build can be downloaded from [here][win32_v1.1.0].
   - The sources code can be downloaded as zip from [here][source_v1.1.0].
 
