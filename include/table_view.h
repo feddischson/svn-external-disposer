@@ -18,9 +18,9 @@
 // Public License along with this program; if not, see 
 // <http://www.gnu.org/licenses/>. 
 //
-#ifndef _SVN_EXTERNALS_DISPOSER_TREE_VIEW_H 
-#define _SVN_EXTERNALS_DISPOSER_TREE_VIEW_H
-#include <QTreeView>
+#ifndef _SVN_EXTERNALS_DISPOSER_TABLE_VIEW_H_
+#define _SVN_EXTERNALS_DISPOSER_TABLE_VIEW_H_
+#include <QTableView>
 #include <QTextStream>
 
 
@@ -29,35 +29,35 @@ namespace SVN_EXTERNALS_DISPOSER
 
 
 /// @author feddischson
-/// @brief  Class to extend QTreeView
-class Tree_View : public QTreeView
+/// @brief  Class to extend QTableView
+class Table_View : public QTableView
 {
 
    Q_OBJECT
 public:
 
    /// @brief Ctor: not implemented!
-   explicit Tree_View( QWidget *parent = nullptr );
+   explicit Table_View( QWidget *parent = nullptr );
 
 
    /// @brief  Copy ctor: not implemented!
-   Tree_View(const Tree_View & a_template_) = delete;
+   Table_View(const Table_View & a_template_) = delete;
 
 
    /// @brief  Assignment operator: not implemented!
-   Tree_View& operator= (const Tree_View & a_tv ) = delete;
+   Table_View& operator= (const Table_View & a_tv ) = delete;
 
 
    /// @brief  Move constructor: not implemented!
-   Tree_View( Tree_View && rhs ) = delete;
+   Table_View( Table_View && rhs ) = delete;
 
 
    /// @brief  Move assignment operator: not implemented!
-   Tree_View& operator=( Tree_View && rhs ) = delete;
+   Table_View& operator=( Table_View && rhs ) = delete;
 
 
    /// @brief Standard dtor
-   ~Tree_View() = default;
+   ~Table_View() = default;
 
 
 private:
@@ -71,11 +71,11 @@ signals:
 
    void selection_changed( const QItemSelection & selected );
 
-}; // class Tree_View
+}; // class Table_View
 
 }; // namespace SVN_EXTERNALS_DISPOSER
 
-#endif // _SVN_EXTERNALS_DISPOSER_TREE_VIEW_H 
+#endif // _SVN_EXTERNALS_DISPOSER_TABLE_VIEW_H_
 
 // vim: filetype=cpp et ts=3 sw=3 sts=3
 

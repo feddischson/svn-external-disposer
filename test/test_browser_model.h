@@ -18,64 +18,68 @@
 // Public License along with this program; if not, see 
 // <http://www.gnu.org/licenses/>. 
 //
-#ifndef _SVN_EXTERNALS_DISPOSER_TREE_VIEW_H 
-#define _SVN_EXTERNALS_DISPOSER_TREE_VIEW_H
-#include <QTreeView>
+#ifndef _SVN_EXTERNALS_DISPOSER_TEST_BROWSER_MODEL_H_ 
+#define _SVN_EXTERNALS_DISPOSER_TEST_BROWSER_MODEL_H_
+#include <QObject>
 #include <QTextStream>
+#include <QtTest/QtTest>
 
 
 namespace SVN_EXTERNALS_DISPOSER
 {
 
 
-/// @author feddischson
-/// @brief  Class to extend QTreeView
-class Tree_View : public QTreeView
+/// @brief Template class
+class Test_Browser_Model : public QObject
 {
 
    Q_OBJECT
+
+private slots:
+
+
+   void test_01_correct_root_url( void );
+
+   void initTestCase();
+   void cleanupTestCase();
+
+
+
 public:
 
-   /// @brief Ctor: not implemented!
-   explicit Tree_View( QWidget *parent = nullptr );
+   /// @brief 
+   explicit Test_Browser_Model( QObject *parent = nullptr );
 
 
    /// @brief  Copy ctor: not implemented!
-   Tree_View(const Tree_View & a_template_) = delete;
+   Test_Browser_Model(const Test_Browser_Model & a_template_) = delete;
 
 
    /// @brief  Assignment operator: not implemented!
-   Tree_View& operator= (const Tree_View & a_tv ) = delete;
+   Test_Browser_Model& operator= (const Test_Browser_Model & a_template_) = delete;
 
 
    /// @brief  Move constructor: not implemented!
-   Tree_View( Tree_View && rhs ) = delete;
+   Test_Browser_Model( Test_Browser_Model && rhs ) = delete;
 
 
    /// @brief  Move assignment operator: not implemented!
-   Tree_View& operator=( Tree_View && rhs ) = delete;
+   Test_Browser_Model& operator=( Test_Browser_Model && rhs ) = delete;
 
 
    /// @brief Standard dtor
-   ~Tree_View() = default;
-
+   ~Test_Browser_Model() = default;
 
 private:
+   static const QString TEST_TREE_PATH;
+   static const QString TEST_TREE_REPO_PATH;
 
-protected:
 
-   void selectionChanged( const QItemSelection &selected,
-                          const QItemSelection &deselected);
-
-signals:
-
-   void selection_changed( const QItemSelection & selected );
-
-}; // class Tree_View
+}; // class Test_Browser_Model
 
 }; // namespace SVN_EXTERNALS_DISPOSER
 
-#endif // _SVN_EXTERNALS_DISPOSER_TREE_VIEW_H 
+#endif // _SVN_EXTERNALS_DISPOSER_TEST_BROWSER_MODEL_H_ 
 
 // vim: filetype=cpp et ts=3 sw=3 sts=3
 

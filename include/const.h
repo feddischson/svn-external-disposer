@@ -68,6 +68,13 @@ Public License along with this program; if not, see         \n\
    static const QString XML_NAME_REVISION = "revision";
    static const QString XML_NAME_DATE     = "date";
    static const QString XML_NAME_AUTHOR   = "author";
+   static const QString XML_NAME_ENTRY    = "entry"; 
+   static const QString XML_NAME_KIND     = "kind";
+   static const QString XML_NAME_NAME     = "name";
+   static const QString XML_NAME_SIZE     = "size";
+   static const QString XML_NAME_COMMIT   = "commit";
+   static const QString XML_NAME_ROOT     = "root";
+   static const QString XML_NAME_URL      = "url";
    /// @}
 
    /// @defgroup svn_const  SVN string constants
@@ -76,6 +83,7 @@ Public License along with this program; if not, see         \n\
    static const QString SVN_CMD           = "svn";
    static const QString SVN_PROPGET       = "propget";
    static const QString SVN_PROPSET       = "propset";
+   static const QString SVN_LIST          = "list";
    static const QString SVN_INFO          = "info";
    static const QString SVN_EXTERNALS     = "svn:externals";
    static const QString SVN_XML           = "--xml";
@@ -145,6 +153,9 @@ Public License along with this program; if not, see         \n\
    static const QString GUI_HEAD_AUTHOR       = QObject::tr( "Author"             );
    static const QString GUI_HEAD_MESSAGE      = QObject::tr( "Message"            );
    static const QString GUI_HEAD_DATE         = QObject::tr( "Date"               );
+   static const QString GUI_HEAD_KIND         = QObject::tr( "Type"               );
+   static const QString GUI_HEAD_SIZE         = QObject::tr( "Size"               );
+   static const QString GUI_HEAD_NAME         = QObject::tr( "Name"               );
    /// @}
 
    /// @brief The background color for modified svn:externals entries
@@ -152,6 +163,17 @@ Public License along with this program; if not, see         \n\
 
    /// @brief The background color for unmodified svn:externals entries
    static const QColor COL_NOT_MODIFIED      = Qt::white;
+
+   static const qint32 BROWSER_N_COL          = 6;
+
+   static const qint32 BROWSER_I_NAME         = 0;
+   static const qint32 BROWSER_I_KIND         = 1;
+   static const qint32 BROWSER_I_REVISION     = 2;
+   static const qint32 BROWSER_I_AUTHOR       = 3;
+   static const qint32 BROWSER_I_DATE         = 4;
+   static const qint32 BROWSER_I_SIZE         = 5;
+
+
 
    /// 
    /// @defgroup regex Regular Expressions

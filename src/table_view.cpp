@@ -18,28 +18,30 @@
 // Public License along with this program; if not, see 
 // <http://www.gnu.org/licenses/>. 
 //
-//
+#include "table_view.h"
 
-#include <QTest>
-#include <QApplication>
-#include "test_external.h"
-#include "test_data_model.h"
-#include "test_browser_item.h"
-#include "test_browser_model.h"
-
-using namespace SVN_EXTERNALS_DISPOSER;
-
-
-int main( int argc, char * argv [] )
+namespace SVN_EXTERNALS_DISPOSER
 {
-   QApplication app(argc, argv);
-   int status = 0;
-   auto EXEC_TEST = [&status, argc, argv](QObject* obj) {
-     status |= QTest::qExec(obj, argc, argv);
-     delete obj;
-   };
-   EXEC_TEST( new Test_External( ) );
-   EXEC_TEST( new Test_Data_Model( "/home/christian/Development/qt/svn-externals-disposer/test/test_tree" ) );
-   EXEC_TEST( new Test_Browser_Item(  ) );
-   EXEC_TEST( new Test_Browser_Model(  ) );
+
+
+Table_View::Table_View( QWidget *parent )
+   : QTableView( parent )
+{
+
 }
+
+
+
+void Table_View::selectionChanged( const QItemSelection &selected,
+                                    const QItemSelection &deselected)
+{
+   QTableView::selectionChanged( selected, deselected );
+
+   emit( selection_changed( selected ) );
+}
+
+
+}; // namespace SVN_EXTERNALS_DISPOSER
+
+// vim: filetype=cpp et ts=3 sw=3 sts=3
+

@@ -30,6 +30,7 @@
 #include "const.h"
 #include "mainwindow.h"
 #include "log_dialog.h"
+#include "browser_dialog.h"
 
 namespace SVN_EXTERNALS_DISPOSER
 {
@@ -389,7 +390,9 @@ void Main_Window::open_context_menu(const QPoint &point)
       return;
 
 
-   if(  ( index.column() == 6 || index.column() == 7 ) 
+   if(  (   index.column() == 5 ||
+            index.column() == 6 || 
+            index.column() == 7 ) 
        && data_model->is_external( proxy_filter->mapToSource( index ) )
       )
    {
@@ -411,22 +414,46 @@ void Main_Window::open_header_menu(const QPoint & point )
 
 void Main_Window::browse_rev( void )
 {
-   if( data_model   != nullptr && 
-       proxy_filter != nullptr )
+   if( data_model   == nullptr || 
+       proxy_filter == nullptr )
    {
-      QModelIndex index = proxy_filter->mapToSource( last_context_index );
-      QString path = data_model->filePath( index );
-      Log_Dialog *d = new Log_Dialog( path, this );
+      return;
+   }
+
+   QModelIndex index = proxy_filter->mapToSource( last_context_index );
+   QString path = data_model->filePath( index );
+
+   if( index.column() == 5 )
+   {
+      Browser_Dialog *d = new Browser_Dialog( path );
       if( d->load() )
       {
 
+         d->exec();
+         if( d->result() )
+         {
+            data_model->setData( index, d->get_url(), Qt::EditRole  );
+         }
+      }
+      else
+      {
+         QMessageBox * m = new QMessageBox( );
+         m->setText( tr("Failed to load the SVN repository browser" ) );
+         m->setDetailedText( "Path: " + path );
+         m->exec();
 
+      }
+   }
+   else if( index.column() == 6 || index.column() == 7 )
+   {
+      Log_Dialog *d = new Log_Dialog( path, this );
+      if( d->load() )
+      {
          auto current_revision = data_model->data( index, Qt::DisplayRole ).toString();
          if( current_revision.length() > 0 )
             d->select_revision( current_revision );
 
          d->exec();
-
          if( d->result() )
          {
             data_model->setData( index, d->get_revision(), Qt::EditRole  );
@@ -439,7 +466,10 @@ void Main_Window::browse_rev( void )
          m->setDetailedText( "Path: " + path );
          m->exec();
       }
+
    }
+
+
 }
 
 

@@ -30,13 +30,12 @@ Tree_View::Tree_View( QWidget *parent )
 
 }
 
-
-Tree_View::operator QString()
+void Tree_View::selectionChanged( const QItemSelection &selected,
+                                    const QItemSelection &deselected)
 {
-   QString s;
-   QTextStream ts(&s);
-   ts  << "Tree_View ("  << reinterpret_cast< void* >( this ) << "): ";
-   return s;
+   QTreeView::selectionChanged( selected, deselected );
+
+   emit( selection_changed( selected ) );
 }
 
 
