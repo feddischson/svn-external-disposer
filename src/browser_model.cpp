@@ -28,15 +28,20 @@
 namespace SVN_EXTERNALS_DISPOSER
 {
 
-Browser_Model::Browser_Model( const QString & path, QObject *parent ) 
+Browser_Model::Browser_Model( 
+      const QString & path, 
+      const QString & revision,
+      QObject *parent ) 
    : QAbstractItemModel( parent ),
    url_path( "" ),
-   root_url_path( "" )
+   root_url_path( "" ),
+   revision( revision )
 {
    get_url_paths( path );
    if( root_url_path.size() > 0 )
    {
-      root_item = new Browser_Item( root_url_path, 
+      root_item = new Browser_Item( root_url_path,
+            revision,
             QList< QVariant> () 
             << GUI_HEAD_NAME
             << GUI_HEAD_KIND 

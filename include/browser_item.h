@@ -40,7 +40,8 @@ public:
 
    /// @brief Initializes the parent_item, url_path and the item_data.
    explicit Browser_Item( 
-         const QString & url_path, 
+         const QString & url_path,
+         const QString & revision,
          const QList< QVariant> & content, 
          Browser_Item *parent = nullptr );
 
@@ -103,6 +104,8 @@ private:
    /// @brief Defines if the children are loaded or not
    bool children_loaded;
 
+   /// @brief The revision
+   QString revision;
 }; // class Browser_Item
 
 }; // namespace SVN_EXTERNALS_DISPOSER

@@ -425,10 +425,18 @@ void Main_Window::browse_rev( void )
 
    if( index.column() == 5 )
    {
-      Browser_Dialog *d = new Browser_Dialog( path );
+      T_SP_External e = data_model->get_external( index );
+      QString revision = "HEAD";
+
+      if( e->peg_revision.toString().size() > 0 )
+         revision = e->peg_revision.toString();
+      else if( e->operative_revision.toString().size() > 0 )
+         revision = e->operative_revision.toString();
+
+      Browser_Dialog *d = new Browser_Dialog( path, revision );
+
       if( d->load() )
       {
-
          d->exec();
          if( d->result() )
          {

@@ -39,7 +39,10 @@ class Browser_Model : public QAbstractItemModel
 public:
 
    /// @brief  Initializes the model by creating the root-item.
-   explicit Browser_Model( const QString & path, QObject *parent = nullptr );
+   explicit Browser_Model( 
+         const QString & path, 
+         const QString & revision,
+         QObject *parent = nullptr );
 
 
    /// @brief Returns the data for a given index (and role).
@@ -117,6 +120,9 @@ private:
 
    /// @brief The URL to the repository.
    QString root_url_path;
+
+   /// @brief The revision which is browsed
+   QString revision;
 
 }; // class Browser_Model
 

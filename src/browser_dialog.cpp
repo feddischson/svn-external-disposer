@@ -27,8 +27,10 @@
 namespace SVN_EXTERNALS_DISPOSER
 {
 
-Browser_Dialog::Browser_Dialog( const QString & path, 
-                                QWidget * parent )
+Browser_Dialog::Browser_Dialog( 
+      const QString & path, 
+      const QString & revision,
+      QWidget * parent )
    : QDialog( parent ),
      path( path )
 {
@@ -36,17 +38,18 @@ Browser_Dialog::Browser_Dialog( const QString & path,
    ui.setupUi(this);
 
    repository_TRV = new Tree_View( this );
-   layout = new QVBoxLayout( this );
+   layout = new QVBoxLayout( );
    layout->addWidget( repository_TRV );
    ui.repository_WL->setLayout(layout);
 
 
 
    repository_TBV = new Table_View( this );
-   layout = new QVBoxLayout( this );
+   layout = new QVBoxLayout( );
    layout->addWidget( repository_TBV );
    ui.repository_WR->setLayout(layout);
 
+   ui.revision_LE->setText( revision );
 
    repository_TBV->setSelectionBehavior( QAbstractItemView::SelectRows );
    repository_TBV->setSelectionMode( QAbstractItemView::SingleSelection );
@@ -66,7 +69,7 @@ Browser_Dialog::Browser_Dialog( const QString & path,
 bool Browser_Dialog::load( void )
 {
 
-   Browser_Model * m = new Browser_Model( path, this );
+   Browser_Model * m = new Browser_Model( path, ui.revision_LE->text(), this );
 
    QString root_url = m->root_url();
    QString url      = m->url();

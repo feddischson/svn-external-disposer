@@ -32,13 +32,15 @@ namespace SVN_EXTERNALS_DISPOSER
 
 Browser_Item::Browser_Item( 
          const QString & url_path, 
+         const QString & revision,
          const QList< QVariant> & content, 
          Browser_Item *parent_item ) :
    QObject( parent_item ),
    item_data( content ),
    parent_item( parent_item ),
    url_path( url_path ),
-   children_loaded( false )
+   children_loaded( false ),
+   revision( revision )
 {
    // nothing more to do here ..
 }
@@ -69,7 +71,9 @@ void Browser_Item::load_children( void )
    process.start( SVN_CMD, QStringList() 
          << SVN_LIST 
          << url_path
-         << SVN_XML );
+         << SVN_XML
+         << SVN_REVISION 
+         << revision );
    if( process.waitForFinished( SYS_PROCESS_TIMEOUT ) && 
        process.exitCode() == 0 ) // wait 3 seconds
    {
@@ -137,7 +141,7 @@ void Browser_Item::load_children( void )
 
             }
 
-            child_items.append( new Browser_Item( url_path + "/" + name, 
+            child_items.append( new Browser_Item( url_path + "/" + name, revision,
                  QList< QVariant> () 
                  << name
                  << kind 

@@ -39,7 +39,8 @@ class Browser_Dialog : public QDialog
 public:
 
    /// @brief Sets the path and initializes the UI.
-   explicit Browser_Dialog( const QString & path, 
+   explicit Browser_Dialog( const QString & path,
+                            const QString & revision,
                             QWidget *parent = nullptr );
 
    /// @brief Initializes the dialog and loads the data.
