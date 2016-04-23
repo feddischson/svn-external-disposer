@@ -60,13 +60,19 @@ QAction * Data_Model::create_redo_action(QObject * parent, const QString & prefi
 
 T_SP_External Data_Model::get_external( const QModelIndex & index ) const
 {
-   return get_external( QFileSystemModel::filePath( index ) );
+   if( index.isValid() )
+      return get_external( QFileSystemModel::filePath( index ) );
+   else
+      return T_SP_External();
 }
 
 
 T_SP_External Data_Model::get_external( const QString & path ) const
 {
-   return external_map.value( path );
+   if( external_map.contains( path ) )
+      return external_map.value( path );
+   else
+      return T_SP_External();
 }
 
 
@@ -130,10 +136,13 @@ void Data_Model::change_external(
    QVariant old_value;
    bool modified = false;
 
+
+   if( !external_map.contains( path ) )
+      return;
+
    // get the external
    T_SP_External external = external_map.value( path );
-   if( !external )
-      return;
+
 
    switch( index )
    {
@@ -458,6 +467,11 @@ QList< QString > Data_Model::extract_externals(
 
 bool Data_Model::is_external_modified( const QString & path ) const
 {
+   if( !external_map.contains( path ) )
+   {
+      qDebug() << "Fatal error: " << path << " does not exist";
+      return false;
+   }
    return external_map.value( path ) != external_map_backup.value( path );
 }
 

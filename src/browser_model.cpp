@@ -29,18 +29,20 @@ namespace SVN_EXTERNALS_DISPOSER
 {
 
 Browser_Model::Browser_Model( 
-      const QString & path, 
+      const QString & , 
+      const QString & url,
       const QString & revision,
       QObject *parent ) 
    : QAbstractItemModel( parent ),
-   url_path( "" ),
-   root_url_path( "" ),
+   root_item( nullptr ),
+   url( url ),
+   root_url( "" ),
    revision( revision )
 {
-   get_url_paths( path );
-   if( root_url_path.size() > 0 )
+   if( get_url_paths( url ) &&
+       root_url.size() > 0 )
    {
-      root_item = new Browser_Item( root_url_path,
+      root_item = new Browser_Item( root_url,
             revision,
             QList< QVariant> () 
             << GUI_HEAD_NAME
@@ -53,14 +55,14 @@ Browser_Model::Browser_Model(
    }
 }
 
-bool Browser_Model::get_url_paths( const QString & path )
+bool Browser_Model::get_url_paths( const QString & url )
 {
    bool succ = true;
 
    QProcess process;
    process.start( SVN_CMD, QStringList() 
          << SVN_INFO 
-         << path
+         << url
          << SVN_XML );
 
    if( process.waitForFinished( SYS_PROCESS_TIMEOUT ) && 
@@ -82,16 +84,7 @@ bool Browser_Model::get_url_paths( const QString & path )
             succ = false;
          }
          else
-            root_url_path = root.item(0).toElement().text();
-
-         QDomNodeList url = doc.elementsByTagName( XML_NAME_URL );
-         if( url.count() != 1 )
-         {
-            qDebug() << "expected only one url entry in svn info";
-            succ = false;
-         }
-         else
-            url_path = url.item(0).toElement().text();
+            root_url = root.item(0).toElement().text();
       }
    }
    else
@@ -158,17 +151,17 @@ QModelIndex Browser_Model::index(
 QModelIndex Browser_Model::index( const QString & url )
 {
 
-   if( root_url_path.size() > url.size() )
+   if( root_url.size() > url.size() )
       return QModelIndex();
 
-   QStringRef beginning( &url, 0, root_url_path.size() );
-   if ( beginning != root_url_path )
+   QStringRef beginning( &url, 0, root_url.size() );
+   if ( beginning != root_url )
       return QModelIndex();
 
    QStringRef end( 
          &url, 
-         root_url_path.size(), 
-         url.size() - root_url_path.size()  );
+         root_url.size(), 
+         url.size() - root_url.size()  );
 
    auto x = end.split("/", QString::SkipEmptyParts );
    return get_index_for_url( x, 0, root_item );
@@ -181,6 +174,10 @@ QModelIndex Browser_Model::get_index_for_url(
 {
 
    bool found = false;
+
+   if( root_item == nullptr )
+      return QModelIndex();
+
 
    if( index == list.size() )
    {
@@ -214,8 +211,8 @@ QModelIndex Browser_Model::parent( const QModelIndex & index ) const
    Browser_Item * child_item  = static_cast< Browser_Item * >( index.internalPointer() );
    Browser_Item * parent_item = child_item->parent();
 
-
-   if( parent_item == root_item )
+   if(   parent_item == nullptr ||
+         parent_item == root_item )
       return QModelIndex();
 
    return createIndex( parent_item->row(), 0, parent_item );
@@ -227,6 +224,9 @@ int Browser_Model::rowCount( const QModelIndex & parent ) const
 {
 
    Browser_Item * parent_item;
+
+   if( root_item == nullptr )
+      return 0;
 
    if (parent.column() > 0)
       return 0;
@@ -241,6 +241,8 @@ int Browser_Model::rowCount( const QModelIndex & parent ) const
 
 int Browser_Model::columnCount( const QModelIndex & parent ) const
 {
+   if( root_item == nullptr )
+      return 0;
 
    if ( parent.isValid() )
       return static_cast< Browser_Item * >( parent.internalPointer() )->column_count();
@@ -252,14 +254,14 @@ int Browser_Model::columnCount( const QModelIndex & parent ) const
 
 
 
-QString Browser_Model::url( void )
+QString Browser_Model::get_url( void )
 {
-   return url_path;
+   return url;
 }
 
-QString Browser_Model::root_url( void )
+QString Browser_Model::get_root_url( void )
 {
-   return root_url_path;
+   return root_url;
 }
 
 

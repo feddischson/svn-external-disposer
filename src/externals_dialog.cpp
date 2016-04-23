@@ -24,6 +24,7 @@
 
 #include "const.h"
 #include "externals_dialog.h"
+#include "browser_dialog.h"
 #include "log_dialog.h"
 
 namespace SVN_EXTERNALS_DISPOSER
@@ -81,10 +82,20 @@ void Externals_Dialog::setup_table( void )
 
 
    // setup content
+   // content is a list of all target paths
+   update_content();
+
+   // connect the cell_change slot again
+   connect( ui.externals_TW, SIGNAL( cellChanged(int,int) ), this, SLOT( cell_changed(int,int) ) );
+
+}
+
+
+void Externals_Dialog::update_content( void )
+{
+   int i = 0;
    content = data_model->get_externals_targets( path ); 
    ui.externals_TW->setRowCount( content.size() );
-
-   int i = 0;
    foreach( auto target_path, content )
    {
       bool modified = data_model->is_external_modified( target_path );
@@ -96,10 +107,6 @@ void Externals_Dialog::setup_table( void )
       ui.externals_TW->setItem( i, 3, create_item( e->operative_revision.toString(), modified ) );
       i++;
    }
-
-   // connect the cell_change slot again
-   connect( ui.externals_TW, SIGNAL( cellChanged(int,int) ), this, SLOT( cell_changed(int,int) ) );
-
 }
 
 
@@ -116,7 +123,6 @@ void Externals_Dialog::cell_changed( int row, int column )
    QString key = content[row];
    data_model->change_external( key,  QVariant( ui.externals_TW->item( row, column )->text() ), column );
 
-
    for( quint32 i=0; i < N_COLUMNS; i++ )
    {
       if( data_model->is_external_modified( key ) )
@@ -129,36 +135,110 @@ void Externals_Dialog::cell_changed( int row, int column )
 
 void Externals_Dialog::open_context_menu(const QPoint & p)
 {
+   QModelIndex index = ui.externals_TW->indexAt(p);
+
+   if( !index.isValid() )
+      return;
+
    last_context_row = ui.externals_TW->itemAt( p )->row();
    last_context_col = ui.externals_TW->itemAt( p )->column();
-   if( last_context_col == 2 || 
+
+   if( last_context_col == 1 ||
+       last_context_col == 2 || 
        last_context_col == 3 )
+   {
+      last_context_index = index;
       revision_menu->exec( ui.externals_TW->mapToGlobal( p ) );
+   }
 }
 
 
 void Externals_Dialog::browse_rev( void )
 {
    QString path = content[ last_context_row ];
-   Log_Dialog *d = new Log_Dialog( path, this );
-   if( d->load() )
-   {
-      d->exec();
-      if( d->result() )
-      {
-         // data_model->setData( last_context_row, d->get_revision(), Qt::EditRole  );
-         QString rev = d->get_revision().toString();
 
-         ui.externals_TW->setItem( last_context_row, last_context_col, create_item( rev, true ) );
-      }
-   }
-   else
+   if( last_context_index.column() == 1 )
    {
-      QMessageBox * m = new QMessageBox( );
-      m->setText( tr("Failed to load the SVN revision log" ) );
-      m->setDetailedText( "Path: " + path );
-      m->exec();
+      QString revision = "HEAD";
+      int     revision_from = 0;
+
+      auto old_url = ui.externals_TW->item( last_context_row, 1 )->text();
+      auto tmp_peg = ui.externals_TW->item( last_context_row, 2 )->text();
+      auto tmp_opr = ui.externals_TW->item( last_context_row, 3 )->text();
+      if( tmp_peg.size() > 0 )
+      {
+         revision      = tmp_peg;
+         revision_from = 2;
+      }
+      else if( tmp_opr.size() > 0 )
+      {
+         revision      = tmp_opr;
+         revision_from = 3;
+      }
+
+      Browser_Dialog *d = new Browser_Dialog( path, old_url, revision );
+
+      if( d->load() )
+      {
+         d->exec();
+         if( d->result() )
+         {
+            QString rev      = d->get_revision();
+            QString new_url = d->get_url();
+
+            if( revision_from == 3 )
+               ui.externals_TW->setItem( last_context_row, 3, create_item( rev, true ) );
+            else if( revision_from == 2 )
+               ui.externals_TW->setItem( last_context_row, 2, create_item( rev, true ) );
+            else if( revision_from == 0 && rev.toLower() != "head" )
+               ui.externals_TW->setItem( last_context_row, 2, create_item( rev, true ) );
+
+            if( new_url != old_url )
+            {
+               ui.externals_TW->setItem( last_context_row, 1, create_item( new_url, true ) );
+               update_content();
+            }
+         }
+      }
+      else
+      {
+         QMessageBox * m = new QMessageBox( );
+         m->setText( tr("Failed to load the SVN repository browser" ) );
+         m->setDetailedText( "Path: " + path );
+         m->exec();
+
+      }
+
+
+
    }
+   else if( last_context_index.column() == 2 || last_context_index.column() == 3 )
+   {
+
+      Log_Dialog *d = new Log_Dialog( path, this );
+      if( d->load() )
+      {
+         d->exec();
+         if( d->result() )
+         {
+            // data_model->setData( last_context_row, d->get_revision(), Qt::EditRole  );
+            QString rev = d->get_revision().toString();
+
+            ui.externals_TW->setItem( last_context_row, last_context_col, create_item( rev, true ) );
+         }
+      }
+      else
+      {
+         QMessageBox * m = new QMessageBox( );
+         m->setText( tr("Failed to load the SVN revision log" ) );
+         m->setDetailedText( "Path: " + path );
+         m->exec();
+      }
+
+   }
+
+
+
 }
 
 

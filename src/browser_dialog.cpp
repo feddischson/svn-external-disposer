@@ -19,7 +19,10 @@
 // <http://www.gnu.org/licenses/>. 
 //
 #include <QDebug>
+#include <QMessageBox>
 
+
+#include "log_dialog.h"
 #include "browser_dialog.h"
 #include "browser_model.h"
 #include "const.h"
@@ -28,11 +31,13 @@ namespace SVN_EXTERNALS_DISPOSER
 {
 
 Browser_Dialog::Browser_Dialog( 
-      const QString & path, 
+      const QString & path,
+      const QString & url,
       const QString & revision,
       QWidget * parent )
    : QDialog( parent ),
-     path( path )
+     path( path ),
+     url( url )
 {
    QVBoxLayout * layout;
    ui.setupUi(this);
@@ -69,13 +74,16 @@ Browser_Dialog::Browser_Dialog(
 bool Browser_Dialog::load( void )
 {
 
-   Browser_Model * m = new Browser_Model( path, ui.revision_LE->text(), this );
+   Browser_Model * m = new Browser_Model( path, url, ui.revision_LE->text(), this );
 
-   QString root_url = m->root_url();
-   QString url      = m->url();
+   QString root_url = m->get_root_url();
+   QString url      = m->get_url();
 
    ui.repository_L->setText( root_url );
-   ui.path_LE->setText( url );
+   if( url.size() > 0 )
+      ui.path_LE->setText( url );
+   else
+      ui.path_LE->setText( path );
 
    repository_TRV->setModel( m );
    repository_TBV->setModel( m );
@@ -118,9 +126,51 @@ void Browser_Dialog::table_selection_changed( const QItemSelection & selected )
    }
 }
 
+
+void Browser_Dialog::on_revision_LE_editingFinished( )
+{
+   load();
+}
+
+
+void Browser_Dialog::on_path_LE_editingFinished()
+{
+   path = ui.path_LE->text();
+   load();
+}
+
+void Browser_Dialog::on_browse_PB_clicked()
+{
+   Log_Dialog *d = new Log_Dialog( path, this );
+   if( d->load() )
+   {
+      d->select_revision( ui.revision_LE->text() );
+      d->exec();
+      if( d->result() )
+      {
+         ui.revision_LE->setText( d->get_revision().toString() );
+         load();
+      }
+   }
+   else
+   {
+      QMessageBox * m = new QMessageBox( );
+      m->setText( tr("Failed to load the SVN revision log" ) );
+      m->setDetailedText( "Path: " + path );
+      m->exec();
+   }
+
+}
+
+
 QString Browser_Dialog::get_url( void )
 {
    return ui.path_LE->text();
+}
+
+QString Browser_Dialog::get_revision( void )
+{
+   return ui.revision_LE->text();
 }
 
 

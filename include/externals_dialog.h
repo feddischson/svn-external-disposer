@@ -96,10 +96,16 @@ private:
    QTableWidgetItem * create_item( const QString text, bool modified );
 
 
+   /// @brief Updates the internal list `content`.
+   void update_content( void );
+
+
    /// @brief UI instance, created from forms/ExternalsDialog.ui.
    Ui::ExternalsDialog ui;
 
    /// @brief The external target list
+   /// @details 
+   ///      This is a list of all destination paths, each for one entry.
    QList< QString > content;
 
    /// @brief 
@@ -125,6 +131,9 @@ private:
 
    /// @brief The last column, where the context of the tablew-widget is opened.
    quint32 last_context_col;
+
+   /// @brief The last index, where the context of the tree-view is opened.
+   QModelIndex last_context_index;
 
 }; // class Externals_Dialog
 

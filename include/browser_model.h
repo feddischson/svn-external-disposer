@@ -41,6 +41,7 @@ public:
    /// @brief  Initializes the model by creating the root-item.
    explicit Browser_Model( 
          const QString & path, 
+         const QString & url, 
          const QString & revision,
          QObject *parent = nullptr );
 
@@ -90,10 +91,10 @@ public:
    Browser_Model& operator=( Browser_Model && rhs ) = delete;
 
    /// @brief Returns the url at which the model is initialized.
-   QString url( void );
+   QString get_url( void );
 
    /// @brief Returns the root-url.
-   QString root_url( void );
+   QString get_root_url( void );
 
    /// @brief Deletes the root_item.
    ~Browser_Model();
@@ -109,17 +110,17 @@ private:
 
 
    /// @brief Reads the root-url and url via svn info
-   bool get_url_paths( const QString & path );
+   bool get_url_paths( const QString & url );
 
 
    /// @brief Pointer to the root item.
    Browser_Item *root_item;
 
    /// @brief The URL to the repository + folder.
-   QString url_path;
+   QString url;
 
    /// @brief The URL to the repository.
-   QString root_url_path;
+   QString root_url;
 
    /// @brief The revision which is browsed
    QString revision;

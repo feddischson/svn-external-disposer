@@ -423,17 +423,27 @@ void Main_Window::browse_rev( void )
    QModelIndex index = proxy_filter->mapToSource( last_context_index );
    QString path = data_model->filePath( index );
 
+
    if( index.column() == 5 )
    {
       T_SP_External e = data_model->get_external( index );
+
+      QString url = e->url.toString();
       QString revision = "HEAD";
+      int     revision_from = 0;
 
       if( e->peg_revision.toString().size() > 0 )
-         revision = e->peg_revision.toString();
+      {
+         revision      = e->peg_revision.toString();
+         revision_from = 6;
+      }
       else if( e->operative_revision.toString().size() > 0 )
-         revision = e->operative_revision.toString();
+      {
+         revision      = e->operative_revision.toString();
+         revision_from = 7;
+      }
 
-      Browser_Dialog *d = new Browser_Dialog( path, revision );
+      Browser_Dialog *d = new Browser_Dialog( path, url, revision );
 
       if( d->load() )
       {
@@ -441,6 +451,27 @@ void Main_Window::browse_rev( void )
          if( d->result() )
          {
             data_model->setData( index, d->get_url(), Qt::EditRole  );
+            QString new_revision = d->get_revision();
+            if( revision_from == 6 )
+            {
+               auto i = index.sibling( index.row(), 6 );
+               if( i.isValid() )
+                  data_model->setData( i, new_revision, Qt::EditRole );
+            } 
+            else if( revision_from == 7 )
+            {
+               auto i = index.sibling( index.row(), 7 );
+               if( i.isValid() )
+                  data_model->setData( i, new_revision, Qt::EditRole );
+            }
+            else if( revision_from == 0 && new_revision.toUpper() != QString("HEAD" ) )
+            {
+               auto i = index.sibling( index.row(), 6 );
+               if( i.isValid() )
+                  data_model->setData( i, new_revision, Qt::EditRole );
+            }
+
+
          }
       }
       else

@@ -40,6 +40,7 @@ public:
 
    /// @brief Sets the path and initializes the UI.
    explicit Browser_Dialog( const QString & path,
+                            const QString & url,
                             const QString & revision,
                             QWidget *parent = nullptr );
 
@@ -65,6 +66,10 @@ public:
 
    /// @brief Returns the selected URL (from the path_LE).
    QString get_url( void );
+
+   /// @brief Returns the selected Revision (from the revision_LE).
+   QString get_revision( void );
+
 private:
 
    /// @brief The internal UI instance (see forms/BrowserDialog.ui)
@@ -72,6 +77,9 @@ private:
 
    /// @brief The initial path.
    QString path;
+
+   /// @brief 
+   QString url;
 
    /// @brief Pointer to the internal tree-view instance
    Tree_View * repository_TRV;
@@ -86,6 +94,12 @@ private slots:
 
    /// @brief Gets called if the selection in the table view changes
    void table_selection_changed( const QItemSelection & selection );
+
+
+
+   void on_revision_LE_editingFinished();
+   void on_path_LE_editingFinished();
+   void on_browse_PB_clicked();
 
 }; // class Browser_Dialog
 
