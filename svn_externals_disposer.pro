@@ -47,7 +47,7 @@ SOURCES     += src/browser_dialog.cpp
 SOURCES     += src/browser_item.cpp
 SOURCES     += src/browser_model.cpp
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 DEFINES += _APP_VERSION=\\\"$$VERSION\\\"
 
 target.path = /usr/local/bin

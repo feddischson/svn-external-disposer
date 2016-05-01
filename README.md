@@ -84,6 +84,16 @@ qmake test.pro
 Version log
 =================
 
+
+v1.2.0
+-------
+This version can be found [here][v1.2.0]:
+
+  - Adds a repository browser
+  - A windows build can be downloaded from [here][win32_v1.2.0].
+  - The sources code can be downloaded as zip from [here][source_v1.2.0].
+
+
 v1.1.0
 -------
 This version can be found [here][v1.1.0]:
@@ -145,6 +155,10 @@ Public License along with this program; if not, see
 <http://www.gnu.org/licenses/>. 
 ```
 
+
+[v1.2.0]: https://github.com/feddischson/svn-externals-disposer/releases/tag/v1.2.0
+[win32_v1.2.0]: https://github.com/feddischson/svn-externals-disposer/releases/download/v1.2.0/svn_externals_disposer_v1.2.0_win32.zip
+[source_v1.2.0]: https://github.com/feddischson/svn-externals-disposer/archive/v1.2.0.zip
 
 
 [v1.1.0]: https://github.com/feddischson/svn-externals-disposer/releases/tag/v1.1.0
