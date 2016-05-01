@@ -30,8 +30,9 @@ namespace SVN_EXTERNALS_DISPOSER
 {
 
 
+/// @brief Implements an AbstractItemModel for browsing a remote SVN repository.
+///
 /// @author feddischson
-/// @brief Template class
 class Browser_Model : public QAbstractItemModel
 {
 

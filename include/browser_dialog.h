@@ -31,14 +31,30 @@ namespace SVN_EXTERNALS_DISPOSER
 {
 
 
-/// @brief Template class
+/// @brief  File Browser Dialog to browse SVN repositories.
+///
+/// @details 
+///         The dialog is splitted into two parts, a tree part on the left
+///         and a table part on the right. Both widgets are using the same
+///         Browser_Model (an AbstractItemModel) to show the data once as
+///         tree and once as table. The tree is mainly to have the navigation
+///         overview and the table provides more details.
+///         Furthermore, this dialog is able to open a revision browser to 
+///         select a specific revision.
+///
+/// @author feddischson
 class Browser_Dialog : public QDialog
 {
 
    Q_OBJECT
 public:
 
-   /// @brief Sets the url and initializes the UI.
+   /// @brief Sets the url  and revision, initializes the UI.
+   ///
+   /// @param url       The URL to the repository (root or sub-path)
+   /// @param revision  The desired revision, can also be 'HEAD'.
+   ///
+   ///
    explicit Browser_Dialog( const QString & url,
                             const QString & revision,
                             QWidget *parent = nullptr );
@@ -70,6 +86,8 @@ public:
    QString get_revision( void );
 
 protected:
+
+   /// @brief  Updates the table and resizes the width of each column.
    virtual void resizeEvent( QResizeEvent * );
 
 private:
@@ -95,9 +113,16 @@ private slots:
    void table_selection_changed( const QItemSelection & selection );
 
 
-
+   /// @brief Is called after the revision editing is finished. Calls 
+   ///        further load().
    void on_revision_LE_editingFinished();
+
+
+   /// @brief Is called after the url-editing is finished. Calls further load().
    void on_url_LE_editingFinished();
+
+   /// @brief Is called after clicking the revision-browse button and 
+   ///        opens the revision browser.
    void on_browse_PB_clicked();
 
 }; // class Browser_Dialog
