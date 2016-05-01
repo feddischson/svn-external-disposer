@@ -30,18 +30,20 @@
 namespace SVN_EXTERNALS_DISPOSER
 {
 
+
+///
+///
 Browser_Dialog::Browser_Dialog( 
-      const QString & path,
       const QString & url,
       const QString & revision,
       QWidget * parent )
    : QDialog( parent ),
-     path( path ),
      url( url )
 {
    QVBoxLayout * layout;
    ui.setupUi(this);
 
+   // add a tree view (left part for the dialog)
    repository_TRV = new Tree_View( this );
    layout = new QVBoxLayout( );
    layout->addWidget( repository_TRV );
@@ -77,16 +79,18 @@ Browser_Dialog::Browser_Dialog(
 bool Browser_Dialog::load( void )
 {
 
-   Browser_Model * m = new Browser_Model( path, url, ui.revision_LE->text(), this );
+   Browser_Model * m = new Browser_Model( url, ui.revision_LE->text(), this );
 
    QString root_url = m->get_root_url();
    QString url      = m->get_url();
 
    ui.repository_L->setText( root_url );
    if( url.size() > 0 )
-      ui.path_LE->setText( url );
+      ui.url_LE->setText( url );
    else
-      ui.path_LE->setText( path );
+   {
+
+   }
 
    repository_TRV->setModel( m );
    repository_TBV->setModel( m );
@@ -113,7 +117,7 @@ void Browser_Dialog::selection_changed( const QItemSelection & selected )
       Browser_Item * item = static_cast< Browser_Item* >(
             selected.indexes()[0].internalPointer());
       repository_TBV->setRootIndex( selected.indexes()[0] );
-      ui.path_LE->setText( item->url() );
+      ui.url_LE->setText( item->url() );
       repository_TBV->clearSelection();
    }
 }
@@ -124,7 +128,7 @@ void Browser_Dialog::table_selection_changed( const QItemSelection & selected )
    {
       Browser_Item * item = static_cast< Browser_Item* >(
             selected.indexes()[0].internalPointer());
-      ui.path_LE->setText( item->url() );
+      ui.url_LE->setText( item->url() );
       repository_TRV->clearSelection();
    }
 }
@@ -136,15 +140,15 @@ void Browser_Dialog::on_revision_LE_editingFinished( )
 }
 
 
-void Browser_Dialog::on_path_LE_editingFinished()
+void Browser_Dialog::on_url_LE_editingFinished()
 {
-   path = ui.path_LE->text();
+   url = ui.url_LE->text();
    load();
 }
 
 void Browser_Dialog::on_browse_PB_clicked()
 {
-   Log_Dialog *d = new Log_Dialog( path, this );
+   Log_Dialog *d = new Log_Dialog( url, this );
    if( d->load() )
    {
       d->select_revision( ui.revision_LE->text() );
@@ -159,16 +163,15 @@ void Browser_Dialog::on_browse_PB_clicked()
    {
       QMessageBox * m = new QMessageBox( );
       m->setText( tr("Failed to load the SVN revision log" ) );
-      m->setDetailedText( "Path: " + path );
+      m->setDetailedText( "URL: " + url );
       m->exec();
    }
-
 }
 
 
 QString Browser_Dialog::get_url( void )
 {
-   return ui.path_LE->text();
+   return ui.url_LE->text();
 }
 
 QString Browser_Dialog::get_revision( void )

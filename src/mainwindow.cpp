@@ -421,8 +421,6 @@ void Main_Window::browse_rev( void )
    }
 
    QModelIndex index = proxy_filter->mapToSource( last_context_index );
-   QString path = data_model->filePath( index );
-
 
    if( index.column() == 5 )
    {
@@ -443,7 +441,7 @@ void Main_Window::browse_rev( void )
          revision_from = 7;
       }
 
-      Browser_Dialog *d = new Browser_Dialog( path, url, revision );
+      Browser_Dialog *d = new Browser_Dialog( url, revision );
 
       if( d->load() )
       {
@@ -478,13 +476,14 @@ void Main_Window::browse_rev( void )
       {
          QMessageBox * m = new QMessageBox( );
          m->setText( tr("Failed to load the SVN repository browser" ) );
-         m->setDetailedText( "Path: " + path );
+         m->setDetailedText( "URL: " + url );
          m->exec();
 
       }
    }
    else if( index.column() == 6 || index.column() == 7 )
    {
+      QString path = data_model->filePath( index );
       Log_Dialog *d = new Log_Dialog( path, this );
       if( d->load() )
       {

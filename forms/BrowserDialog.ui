@@ -40,12 +40,12 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Path</string>
+        <string>URL</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="path_LE">
+      <widget class="QLineEdit" name="url_LE">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>1</horstretch>

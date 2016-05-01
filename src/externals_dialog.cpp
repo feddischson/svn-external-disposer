@@ -155,7 +155,6 @@ void Externals_Dialog::open_context_menu(const QPoint & p)
 
 void Externals_Dialog::browse_rev( void )
 {
-   QString path = content[ last_context_row ];
 
    if( last_context_index.column() == 1 )
    {
@@ -176,7 +175,7 @@ void Externals_Dialog::browse_rev( void )
          revision_from = 3;
       }
 
-      Browser_Dialog *d = new Browser_Dialog( path, old_url, revision );
+      Browser_Dialog *d = new Browser_Dialog( old_url, revision );
 
       if( d->load() )
       {
@@ -204,7 +203,7 @@ void Externals_Dialog::browse_rev( void )
       {
          QMessageBox * m = new QMessageBox( );
          m->setText( tr("Failed to load the SVN repository browser" ) );
-         m->setDetailedText( "Path: " + path );
+         m->setDetailedText( "URL: " + old_url );
          m->exec();
 
       }
@@ -215,6 +214,7 @@ void Externals_Dialog::browse_rev( void )
    else if( last_context_index.column() == 2 || last_context_index.column() == 3 )
    {
 
+      QString path = content[ last_context_row ];
       Log_Dialog *d = new Log_Dialog( path, this );
       if( d->load() )
       {

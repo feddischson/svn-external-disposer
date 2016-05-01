@@ -29,7 +29,6 @@ namespace SVN_EXTERNALS_DISPOSER
 {
 
 Browser_Model::Browser_Model( 
-      const QString & , 
       const QString & url,
       const QString & revision,
       QObject *parent ) 
@@ -39,7 +38,7 @@ Browser_Model::Browser_Model(
    root_url( "" ),
    revision( revision )
 {
-   if( get_url_paths( url ) &&
+   if( get_url_info( url ) &&
        root_url.size() > 0 )
    {
       root_item = new Browser_Item( root_url,
@@ -55,7 +54,7 @@ Browser_Model::Browser_Model(
    }
 }
 
-bool Browser_Model::get_url_paths( const QString & url )
+bool Browser_Model::get_url_info( const QString & url )
 {
    bool succ = true;
 

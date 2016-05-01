@@ -38,9 +38,8 @@ class Browser_Dialog : public QDialog
    Q_OBJECT
 public:
 
-   /// @brief Sets the path and initializes the UI.
-   explicit Browser_Dialog( const QString & path,
-                            const QString & url,
+   /// @brief Sets the url and initializes the UI.
+   explicit Browser_Dialog( const QString & url,
                             const QString & revision,
                             QWidget *parent = nullptr );
 
@@ -64,7 +63,7 @@ public:
    /// @brief Default dtor
    ~Browser_Dialog() = default;
 
-   /// @brief Returns the selected URL (from the path_LE).
+   /// @brief Returns the selected URL (from the url_LE).
    QString get_url( void );
 
    /// @brief Returns the selected Revision (from the revision_LE).
@@ -77,9 +76,6 @@ private:
 
    /// @brief The internal UI instance (see forms/BrowserDialog.ui)
    Ui::BrowserDialog ui;
-
-   /// @brief The initial path.
-   QString path;
 
    /// @brief 
    QString url;
@@ -101,7 +97,7 @@ private slots:
 
 
    void on_revision_LE_editingFinished();
-   void on_path_LE_editingFinished();
+   void on_url_LE_editingFinished();
    void on_browse_PB_clicked();
 
 }; // class Browser_Dialog

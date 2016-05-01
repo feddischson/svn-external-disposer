@@ -40,7 +40,6 @@ public:
 
    /// @brief  Initializes the model by creating the root-item.
    explicit Browser_Model( 
-         const QString & path, 
          const QString & url, 
          const QString & revision,
          QObject *parent = nullptr );
@@ -109,8 +108,8 @@ private:
          Browser_Item * parent );
 
 
-   /// @brief Reads the root-url and url via svn info
-   bool get_url_paths( const QString & url );
+   /// @brief Reads the url info via svn info.
+   bool get_url_info( const QString & url );
 
 
    /// @brief Pointer to the root item.
