@@ -44,7 +44,7 @@ void Test_Browser_Model::test_01_correct_root_url( void )
    QString root = "file://" + QDir( TEST_TREE_REPO_PATH ).absolutePath();
 
    // initiate with a non-root url -> should lookup the root url
-   Browser_Model * m = new Browser_Model( TEST_TREE_PATH + "/d1/d1c" );
+   Browser_Model * m = new Browser_Model( TEST_TREE_PATH + "/d1/d1c", "HEAD" );
    QModelIndex i = m->index( 0, 0 );
    QCOMPARE( i.isValid(), true );
    Browser_Item * item = static_cast< Browser_Item * >( i.internalPointer() );

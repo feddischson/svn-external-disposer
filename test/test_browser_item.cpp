@@ -71,7 +71,9 @@ void Test_Browser_Item::cleanupTestCase()
 
 void Test_Browser_Item::test_01_n_columns()
 {
-   Browser_Item * b = new Browser_Item( "file://" + QDir( TEST_TREE_REPO_PATH ).absolutePath(),
+   Browser_Item * b = new Browser_Item( 
+         "file://" + QDir( TEST_TREE_REPO_PATH ).absolutePath(),
+         "HEAD",
          QList< QVariant> () 
          << GUI_HEAD_NAME
          << GUI_HEAD_KIND 
@@ -86,8 +88,10 @@ void Test_Browser_Item::test_01_n_columns()
 
 void Test_Browser_Item::test_02_children()
 {
-   Browser_Item * b = new Browser_Item( "file://" + QDir( TEST_TREE_REPO_PATH ).absolutePath(),
-         QList< QVariant> () 
+   Browser_Item * b = new Browser_Item( 
+         "file://" + QDir( TEST_TREE_REPO_PATH ).absolutePath(),
+         "HEAD",
+         QList< QVariant> ()
          << GUI_HEAD_NAME
          << GUI_HEAD_KIND 
          << GUI_HEAD_REVISION
