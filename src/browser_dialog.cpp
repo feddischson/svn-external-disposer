@@ -49,16 +49,19 @@ Browser_Dialog::Browser_Dialog(
 
 
 
+   // add a table view (right part of the dialog)
    repository_TBV = new Table_View( this );
    layout = new QVBoxLayout( );
-   layout->addWidget( repository_TBV );
+   layout->addWidget( repository_TBV, 1 );
    ui.repository_WR->setLayout(layout);
 
    ui.revision_LE->setText( revision );
-
    repository_TBV->setSelectionBehavior( QAbstractItemView::SelectRows );
    repository_TBV->setSelectionMode( QAbstractItemView::SingleSelection );
 
+   //
+   // connect the two selection_changed signals from both parts
+   //
    connect( 
          repository_TBV, 
          SIGNAL( selection_changed( const QItemSelection & ) ),
@@ -171,6 +174,30 @@ QString Browser_Dialog::get_url( void )
 QString Browser_Dialog::get_revision( void )
 {
    return ui.revision_LE->text();
+}
+
+
+void Browser_Dialog::resizeEvent( QResizeEvent * )
+{
+   int widget_w  =  ui.repository_WR->size().width();
+   int min_widget_w =  0;
+   int col_w[ BROWSER_N_COL ];
+   int delta_w;
+   repository_TBV->resizeColumnsToContents();
+   for( int i=0; i < BROWSER_N_COL; i++ )
+   {
+      col_w[ i ] = repository_TBV->columnWidth(i);
+      min_widget_w += col_w[i];
+   }
+
+   delta_w = (widget_w - min_widget_w) /  BROWSER_N_COL;
+   if( delta_w > 0 )
+   {
+      for( int i=0; i < BROWSER_N_COL; i++ )
+      {
+         repository_TBV->setColumnWidth( i, col_w[ i ] + delta_w);
+      }
+   }
 }
 
 

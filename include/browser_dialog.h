@@ -70,6 +70,9 @@ public:
    /// @brief Returns the selected Revision (from the revision_LE).
    QString get_revision( void );
 
+protected:
+   virtual void resizeEvent( QResizeEvent * );
+
 private:
 
    /// @brief The internal UI instance (see forms/BrowserDialog.ui)
