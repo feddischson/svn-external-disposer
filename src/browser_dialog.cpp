@@ -88,9 +88,7 @@ bool Browser_Dialog::load( void )
    if( url.size() > 0 )
       ui.url_LE->setText( url );
    else
-   {
-
-   }
+      return false;
 
    repository_TRV->setModel( m );
    repository_TBV->setModel( m );
